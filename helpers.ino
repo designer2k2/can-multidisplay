@@ -125,6 +125,7 @@ void CommandHandler(String commandtext) {
     Serial.println("CAN Display by designer2k2");
     Serial.println("Commands:");
     Serial.println("?   for this help");
+    Serial.println("c:v for software version");
     Serial.println("c:p for next screen");
     Serial.println("c:l for a List of all Files on the SD Card");
     Serial.println("c:s:TEST.TXT  to send TEST.TXT");
@@ -139,6 +140,9 @@ void CommandHandler(String commandtext) {
   }
   else if (commandtext.substring(0, 3) == "c:s") {
     SendFile(commandtext.substring(4));
+  }
+  else if (commandtext.substring(0, 3) == "c:v") {
+    Serial.println("Version: 1.0");
   }
   else if (commandtext.substring(0, 3) == "c:l") {
     ListFile();

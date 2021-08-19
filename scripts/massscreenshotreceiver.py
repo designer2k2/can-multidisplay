@@ -12,9 +12,9 @@ import serial
 import screenshotreceive2
 
 
-def screenshotcatcher(filename, storefile):
+def screenshotcatcher(filename, comport, storefile):
     #  open serial
-    ser = serial.Serial("COM5", 2000000, timeout=0.25)
+    ser = serial.Serial(comport, 2000000, timeout=0.25)
     # send request
     ser.write(b"c:d:p\n")  # write request
     ser.flush()
@@ -45,8 +45,8 @@ def screenshotcatcher(filename, storefile):
 
 
 if __name__ == "__main__":
-    for x in range(150):
+    for x in range(5):
         print("Run {} from {}".format(x, 150))
         imagefilename = "received\{0:05d}.PNG".format(x)
-        screenshotcatcher(imagefilename, False)
+        screenshotcatcher(imagefilename, "COM5", False)
     # run: ffmpeg -framerate 12 -i "%05d.png" video.mp4
