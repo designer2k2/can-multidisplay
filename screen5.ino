@@ -67,6 +67,22 @@ void screen5run() {
   tft.println(sz);
 
 
+  // Show CEL Infos if present:
+  if (emucan.decodeCel()) {
+    //Show CEL Details:
+    tft.setCursor(1, 180);
+    //The can_error_data contains detailed information.
+    tft.println("CEL!");
+    if (emucan.emu_data.cel & emucan.ERR_CLT) tft.print("CLT ");
+    if (emucan.emu_data.cel & emucan.ERR_IAT) tft.print("IAT ");
+    if (emucan.emu_data.cel & emucan.ERR_MAP) tft.print("MAP ");
+    if (emucan.emu_data.cel & emucan.ERR_WBO) tft.print("WBO ");
+    if (emucan.emu_data.cel & emucan.ERR_EGT1) tft.print("EGT1 ");
+    if (emucan.emu_data.cel & emucan.ERR_EGT2) tft.print("EGT2 ");
+    if (emucan.emu_data.cel & emucan.EGT_ALARM ) tft.print("KNOCK");
+  }
+
+
   tft.updateScreen();
 }
 
@@ -104,7 +120,7 @@ void board_computer_calc() {
 
   //Distance with speed:
   float dist;
-  dist = (time_diff * this_speed) / 3600.0; //Meter since last update
+  dist = ((time_diff * this_speed) / 3600.0) / 1000.0; //Meter since last update
   trip_distance += (dist / 1000.0); //adding KM
 
   //Handle fuel used reset:

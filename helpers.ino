@@ -63,42 +63,60 @@ void blinkythread() {
       // Blank out all
       if (rgb_status == 0) {
         for (int i = 0; i < leds.numPixels(); i++) {
+          leds.setBrightness(50);
           leds.setPixel(i, 0x00000000);
         }
         leds.show();
         rgb_status = 1;
       } //else {
       // First (Bottom) LED, is the NOS, Blue = Armed, Green = Active
-      // center 2 ? CEL ?
-      // 4 (Top) LED ist Shiftlight, Red = Active
-      //}
-      threads.delay(1000);
+      // Top 2 Shiftlight
+      if (emucan.emu_data.RPM > 6500) {
+        leds.setPixel(3, 0x00FF0000);
+        leds.setPixel(4, 0x00FF0000);
+        leds.show();
+        rgb_status = 0;
+      }
+      // CEL, second from below.
+      if (emucan.decodeCel()) {
+        leds.setPixel(2, 0x00FF0000);
+        leds.show();
+        rgb_status = 0;
+      }
+      // WAES, parametric 1, bottom:
+      if (emucan.emu_data.outflags1 & emucan.F_PO1 ) {
+        leds.setPixel(1, 0x000000FF);
+        leds.show();
+        rgb_status = 0;
+      }
+      threads.delay(100);
       threads.yield();
     } else {
       // Fancy Color Bars Demo Mode
+      leds.setBrightness(3);
       rgb_status = 0;
       for (int i = 0; i < leds.numPixels(); i++) {
         leds.setPixel(i, 0x00FF0000);
         leds.show();
-        threads.delay(200);
+        threads.delay(100);
         threads.yield();
       }
       for (int i = 0; i < leds.numPixels(); i++) {
         leds.setPixel(i, 0x0000FF00);
         leds.show();
-        threads.delay(200);
+        threads.delay(100);
         threads.yield();
       }
       for (int i = 0; i < leds.numPixels(); i++) {
         leds.setPixel(i, 0x000000FF);
         leds.show();
-        threads.delay(200);
+        threads.delay(100);
         threads.yield();
       }
       for (int i = 0; i < leds.numPixels(); i++) {
         leds.setPixel(i, 0x008F8F8F);
         leds.show();
-        threads.delay(200);
+        threads.delay(100);
         threads.yield();
       }
     }

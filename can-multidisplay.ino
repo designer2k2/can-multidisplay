@@ -406,7 +406,6 @@ void setup() {
 
   //WS2812 LED Thread:
   leds.begin();
-  leds.setBrightness(3);
   blinkythreadID = threads.addThread(blinkythread);
 
   Serial.println("Thread Blink:" + String(blinkythreadID));

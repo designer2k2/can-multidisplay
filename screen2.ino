@@ -14,6 +14,8 @@
 
 #include <CircularBuffer.h>     //https://github.com/rlogiacco/CircularBuffer/
 
+#include "icons.c"    //Contains fancy icons
+
 int screen2var = 0;
 unsigned int arcsHigh = 0;
 unsigned long arcsHighTime = 0;
@@ -113,8 +115,8 @@ void screen2run() {
   }
 
   // RPM warn area:
-  drawArc(80, 120, 74, 5, 6500 / 26 + 135, 45, tft.color565(255, 0, 0)); // slight 3D effect
-  drawArc(80, 120, 69, 5, 6500 / 26 + 135, 45, tft.color565(128, 0, 0)); // slight 3D effect
+  drawArc(80, 120, 74, 5, rev_limiter / 26 + 135, 45, tft.color565(255, 0, 0)); // slight 3D effect
+  drawArc(80, 120, 69, 5, rev_limiter / 26 + 135, 45, tft.color565(128, 0, 0)); // slight 3D effect
 
   //RPM Store high, and drop after 3 sec by 5deg each round
   uint16_t rpmcolor = ILI9341_RED;
@@ -349,8 +351,9 @@ void screen2run() {
   // EGT Text:
   tft.setFont(Arial_16);
   tft.setTextColor(ILI9341_LIGHTGREY);
-  tft.setCursor(225, 10);
-  tft.print("E:");
+
+  // EGT Icon:
+  tft.writeRect(220, 2, 27, 25, (uint16_t*)egt_27x25);
 
   // EGT Difference:
   int diffegt;
@@ -360,16 +363,20 @@ void screen2run() {
   tft.print(diffegt);
 
   //CLT / IAT:
-  tft.setCursor(240, 80);
-  tft.print("C:");
-  tft.setCursor(175, 80);
-  tft.print("I:");
+  //tft.setCursor(240, 80);
+  //tft.print("C:");
+  tft.writeRect(240, 75, 26, 22, (uint16_t*)clt26x22);
+  //tft.setCursor(175, 80);
+  //tft.print("I:");
+  tft.writeRect(170, 75, 26, 25, (uint16_t*)iat_26x25);
 
   //OILP / OILT:
-  tft.setCursor(240, 45);
-  tft.print("O:");
-  tft.setCursor(170, 45);
-  tft.print("O:");
+  //tft.setCursor(240, 45);
+  //tft.print("O:");
+  tft.writeRect(240, 40, 28, 21, (uint16_t*)oiltemp_28x21);
+  //tft.setCursor(170, 45);
+  //tft.print("O:");
+  tft.writeRect(170, 40, 30, 24, (uint16_t*)oilp_30x24);
 
   //Ign Angle and Fuel:
   tft.setTextColor(ILI9341_RED);
@@ -409,8 +416,8 @@ void screen2run() {
   // Warning Sign
   if (DemoMode) {
     if (second() % 2) {
-      tft.setFont(AwesomeF000_32);
-      tft.setCursor(160, 15);
+      tft.setFont(AwesomeF000_96);
+      tft.setCursor(15, 30);
       tft.setTextColor(ILI9341_RED);
       tft.print(char(113));  // 113 = Warning https://hackaday.io/project/7330/gallery#db8ed33fc293ae63248b1d5737a3f128
     }
@@ -418,8 +425,8 @@ void screen2run() {
     if (emucan.decodeCel()) {
       //Check Engine Light is on!
       if (second() % 2) {
-        tft.setFont(AwesomeF000_32);
-        tft.setCursor(160, 15);
+        tft.setFont(AwesomeF000_96);
+        tft.setCursor(15, 30);
         tft.setTextColor(ILI9341_RED);
         tft.print(char(113));  // 113 = Warning https://hackaday.io/project/7330/gallery#db8ed33fc293ae63248b1d5737a3f128
       }
