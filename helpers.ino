@@ -47,6 +47,8 @@ void digitalClockDisplay() {
           year(), month(), day(), hour(), minute(), second(), (millis() - 300) % 1000);
   tft.println(sz);
 }
+
+
 void printDigits(int digits) {
   // utility function for digital clock display: prints preceding colon and leading 0
   tft.print(":");
@@ -83,11 +85,18 @@ void blinkythread() {
         leds.show();
         rgb_status = 0;
       }
-      // WAES, parametric 1, bottom:
+      // WAES active, BLUE, parametric 1, bottom:
       if (emucan.emu_data.outflags1 & emucan.F_PO1 ) {
         leds.setPixel(1, 0x000000FF);
         leds.show();
         rgb_status = 0;
+      } else {
+        // WAES Enabled, GREEN, Switch #3
+        if (emucan.emu_data.outflags3 & emucan.F_SW3  ) {
+          leds.setPixel(1, 0x00004000);
+          leds.show();
+          rgb_status = 0;
+        }
       }
       threads.delay(100);
       threads.yield();
@@ -393,5 +402,61 @@ void specialframefunction(const CAN_message_t *frame) {
     fuel_usage = ((frame->buf[4] << 8) + frame->buf[3]) / 100.0;
   }
 
+
+}
+
+//Max Checker:
+void max_event_checker() {
+
+  char sz[32];
+  sprintf(sz, "%02d/%02d/%02d %02d:%02d:%02d.%03ld ",
+          year(), month(), day(), hour(), minute(), second(), (millis() - 300) % 1000);
+
+  // Max RPM:
+  if (emucan.emu_data.RPM > emu_max_rpm.emu_data_store.RPM) {
+    emu_max_rpm.emu_data_store = emucan.emu_data;
+    strcpy(emu_max_rpm.max_event_time, sz);
+  }
+
+  // Max IAT:
+  if (emucan.emu_data.IAT > emu_max_iat.emu_data_store.IAT) {
+    emu_max_iat.emu_data_store = emucan.emu_data;
+    strcpy(emu_max_iat.max_event_time, sz);
+  }
+
+  // Max CLT:
+  if (emucan.emu_data.CLT > emu_max_clt.emu_data_store.CLT) {
+    emu_max_clt.emu_data_store = emucan.emu_data;
+    strcpy(emu_max_clt.max_event_time, sz);
+  }
+
+  // Max MAP:
+  if (emucan.emu_data.MAP > emu_max_map.emu_data_store.MAP) {
+    emu_max_map.emu_data_store = emucan.emu_data;
+    strcpy(emu_max_map.max_event_time, sz);
+  }
+
+  // Max oilp:
+  if (emucan.emu_data.oilPressure > emu_max_oilp.emu_data_store.oilPressure) {
+    emu_max_oilp.emu_data_store = emucan.emu_data;
+    strcpy(emu_max_oilp.max_event_time, sz);
+  }
+
+  // Max oilt:
+  if (emucan.emu_data.oilTemperature  > emu_max_oilt.emu_data_store.oilTemperature) {
+    emu_max_oilt.emu_data_store = emucan.emu_data;
+    strcpy(emu_max_oilt.max_event_time, sz);
+  }
+
+  // Max egt:
+  if (emucan.emu_data.Egt1 > emu_max_egt.emu_data_store.Egt1) {
+    emu_max_egt.emu_data_store = emucan.emu_data;
+    strcpy(emu_max_egt.max_event_time, sz);
+  }
+  // Max egt2:
+  if (emucan.emu_data.Egt2 > emu_max_egt.emu_data_store.Egt2) {
+    emu_max_egt.emu_data_store = emucan.emu_data;
+    strcpy(emu_max_egt.max_event_time, sz);
+  }
 
 }

@@ -144,14 +144,32 @@ float fuel_used = 0;
 float fuel_usage = 0;
 
 // Board computer things:
-float trip_distance = 0;
-unsigned long trip_distance_last = 0;
-float trip_fuel_used = 0;
-float fuel_offset = 0;
-float trip_fuel_average = 0;
-float trip_fuel_now = 0;
-boolean trip_fuel_stationary = true;
-unsigned long trip_time = 0;
+struct trip_data {
+  unsigned long trip_distance_last = 0;
+  float trip_distance = 0;
+  float fuel_offset = 0;
+  float trip_fuel_average = 0;
+  float trip_fuel_now = 0;
+  unsigned long trip_time = 0;
+  float trip_fuel_used = 0;
+  boolean trip_fuel_stationary = true;
+};
+struct trip_data trip1;
+struct trip_data trip2;
+
+
+// Storage for MAX events
+struct max_event {
+  struct emu_data_t emu_data_store;
+  char max_event_time[32];
+};
+struct max_event emu_max_rpm;
+struct max_event emu_max_iat;
+struct max_event emu_max_clt;
+struct max_event emu_max_map;
+struct max_event emu_max_oilp;
+struct max_event emu_max_oilt;
+struct max_event emu_max_egt;
 
 
 // Setup: ------------------------------------------------------------------------------------------------
@@ -463,6 +481,9 @@ void loop() {
 
   // CAN Loop:
   emucan.checkEMUcan();
+
+  // Max Event check:
+  max_event_checker();
 
   //Mpu fetch:
   mpu.update();

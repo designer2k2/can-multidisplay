@@ -4,6 +4,8 @@
 // Consumption:  Below 5kmh  = L/H,  else L/100km
 // Distance: oldvalue + (time now - time old) * (speed / 3.6)
 
+
+
 void screen5press(int X, int Y, int Z) {
   if (millis() > lasttouch + 500) {
     lasttouch = millis();
@@ -11,6 +13,8 @@ void screen5press(int X, int Y, int Z) {
       if (Y > 120) {
         //switch screens
         ScreenSwitch();
+      } else {
+        board_computer_reset(&trip1);
       }
     }
   }
@@ -59,11 +63,11 @@ void screen5run() {
 
 
   sprintf(sz, "Fuel consumed: %2.2fL, Distance: %3.2fkm\nTime: %s",
-          trip_fuel_used, trip_distance, TimeToString(trip_time / 1000));
+          trip1.trip_fuel_used, trip1.trip_distance, TimeToString(trip1.trip_time / 1000));
   tft.println(sz);
 
   sprintf(sz, "Fuel now: %3.2fL, Average: %3.2f, Gear: %1u",
-          trip_fuel_now, trip_fuel_average, emucan.emu_data.gear);
+          trip1.trip_fuel_now, trip1.trip_fuel_average, emucan.emu_data.gear);
   tft.println(sz);
 
 
@@ -101,49 +105,62 @@ char * TimeToString(unsigned long t)
 // Board Computer Thread runs ~ 500ms
 void board_computer_thread() {
   while (1) {
-    board_computer_calc();
+    board_computer_calc(&trip1);
+    //board_computer_calc(&trip2);
     threads.delay(500);
     threads.yield();
   }
 }
 
 // Run this at a static intervall:
-void board_computer_calc() {
+void board_computer_calc(struct trip_data *tripdata) {
   //Timestamp:
   unsigned long this_time = millis();
   uint16_t this_speed = emucan.emu_data.vssSpeed;
 
   //Timediff since last run:
   unsigned long time_diff;
-  time_diff = this_time - trip_distance_last;
-  trip_distance_last = this_time;
+  time_diff = this_time - tripdata->trip_distance_last;
+  tripdata->trip_distance_last = this_time;
 
   //Distance with speed:
   float dist;
   dist = ((time_diff * this_speed) / 3600.0) / 1000.0; //Meter since last update
-  trip_distance += (dist / 1000.0); //adding KM
+  tripdata->trip_distance += (dist / 1000.0); //adding KM
 
   //Handle fuel used reset:
-  trip_fuel_used =  fuel_used;
+  tripdata->trip_fuel_used =  fuel_used;
 
   //Trip Fuel usage average:
-  trip_fuel_average = (100 / trip_distance) * trip_fuel_used;
+  tripdata->trip_fuel_average = (100 / tripdata->trip_distance) * tripdata->trip_fuel_used;
 
   //Fuel current average:
   if (this_speed > 5) {
-    if (trip_fuel_stationary == true) {
-      trip_fuel_now = 0;
+    if (tripdata->trip_fuel_stationary == true) {
+      tripdata->trip_fuel_now = 0;
     }
-    trip_fuel_stationary = false;
-    trip_fuel_now = trip_fuel_now * 0.9 + (100.0 / this_speed  * fuel_usage) * 0.1;
+    tripdata->trip_fuel_stationary = false;
+    tripdata->trip_fuel_now = tripdata->trip_fuel_now * 0.9 + (100.0 / this_speed  * fuel_usage) * 0.1;
   } else {
-    if (trip_fuel_stationary == false) {
-      trip_fuel_now = 0;
+    if (tripdata->trip_fuel_stationary == false) {
+      tripdata->trip_fuel_now = 0;
     }
-    trip_fuel_stationary = true;
-    trip_fuel_now = trip_fuel_now * 0.9 + fuel_usage * 0.1;
+    tripdata->trip_fuel_stationary = true;
+    tripdata->trip_fuel_now = tripdata->trip_fuel_now * 0.9 + fuel_usage * 0.1;
   }
 
   //Trip time:
-  trip_time = this_time;
+  tripdata->trip_time = this_time;
+}
+
+// Call this to reset a trip:
+void board_computer_reset(struct trip_data *tripdata) {
+  tripdata->trip_distance_last = 0;
+  tripdata->trip_distance = 0;
+  tripdata->fuel_offset = 0;
+  tripdata->trip_fuel_average = 0;
+  tripdata->trip_fuel_now = 0;
+  tripdata->trip_time = 0;
+  tripdata->trip_fuel_used = 0;
+  tripdata->trip_fuel_stationary = true;
 }
