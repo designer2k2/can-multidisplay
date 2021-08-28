@@ -26,11 +26,11 @@ void datalogtask2() {
   dataString += timeStamp;
 
   //Temperature Sensor Data:
-  dataString += String(lm75temp);
+  //dataString += String(lm75temp, 1);  //28.08.2021 remove LM75, mpu is enough
+  dataString += "0,";
+  dataString += String(mpu.getTemp(), 1);
   dataString += ",";
-  dataString += String(mpu.getTemp());
-  dataString += ",";
-  dataString += String(tempmonGetTemp());
+  dataString += String(tempmonGetTemp(), 1);
   dataString += ",";
 
   //MPU Data:
@@ -55,11 +55,11 @@ void datalogtask2() {
   dataString += ",";
   dataString += String(gps.location.lng(), 5);
   dataString += ",";
-  dataString += String(gps.altitude.meters());
+  dataString += String(gps.altitude.meters(), 1);
   dataString += ",";
-  dataString += String(gps.speed.kmph());
+  dataString += String(gps.speed.kmph(), 1);
   dataString += ",";
-  dataString += String(gps.course.deg());
+  dataString += String(gps.course.deg(), 0);
   dataString += ",";
   dataString += String(gps.hdop.hdop());
   dataString += ",";
@@ -89,9 +89,9 @@ void datalogtask2() {
   dataString += ",";
   dataString += String(emucan.emu_data.Baro);
   dataString += ",";
-  dataString += String(emucan.emu_data.IgnAngle);
+  dataString += String(emucan.emu_data.IgnAngle, 0);
   dataString += ",";
-  dataString += String(emucan.emu_data.LambdaCorrection);
+  dataString += String(emucan.emu_data.LambdaCorrection, 0);
   dataString += ",";
   dataString += String(emucan.emu_data.gear);
   dataString += ",";

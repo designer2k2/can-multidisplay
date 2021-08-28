@@ -545,6 +545,8 @@ void loop() {
         break;
     }
 
+    //lm75temp = temperature.readTemperatureC();
+
     //CAN Switch OFF after the time has passed:
     if ((millis() > CAN_Switch_turnoff) && (CAN_Switch_2 == true)) {
       CAN_Switch_2 = false;

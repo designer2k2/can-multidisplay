@@ -87,8 +87,14 @@ void screen2run() {
   unsigned int rpms;
   if (DemoMode) {
     rpms = (second() + ((millis() - 300) % 1000) / 1000.0) * 120.0;
+    rev_limiter = 6500;
   } else {
     rpms = emucan.emu_data.RPM;
+    if (emucan.emu_data.oilTemperature > 40) {
+      rev_limiter = 6500;
+    } else {
+      rev_limiter = 3000;
+    }
   }
 
   //Save RPM to the buffer:

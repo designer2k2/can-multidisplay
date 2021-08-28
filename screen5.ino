@@ -126,7 +126,7 @@ void board_computer_calc(struct trip_data *tripdata) {
   //Distance with speed:
   float dist;
   dist = ((time_diff * this_speed) / 3600.0) / 1000.0; //Meter since last update
-  tripdata->trip_distance += (dist / 1000.0); //adding KM
+  tripdata->trip_distance += dist; //adding KM -> Revised 28.08.2021 -> removed /1000 
 
   //Handle fuel used reset:
   tripdata->trip_fuel_used =  fuel_used;
