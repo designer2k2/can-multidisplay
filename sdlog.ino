@@ -18,8 +18,8 @@ void datalogtask2() {
 
   // The millis rollover not in sync with the seconds,  so substract 300ms:
   char timeStamp[25];
-  sprintf(timeStamp, "[%02d/%02d/%02d][%02d:%02d:%02d.%03ld],",
-          (year() - 2000), month(), day(), hour(), minute(), second(), (millis() - 300) % 1000);
+  sprintf(timeStamp, "[%02d/%02d/%02d],%05d.%03ld,",
+          (year() - 2000), month(), day(), hour() * minute() * second(), (millis() - 300) % 1000);
 
   String dataString = "";
 
@@ -127,7 +127,7 @@ void datalogtask2() {
       // Filesize is below 1, its new, so write a header instead:
       Serial.print("Generate Header for New Logfile:");
       Serial.println(filename);
-      String headString = "Time,BoardTemp,MPUTemp,TeensyTemp,AccX,AccY,AccZ,GyroX,GyroY,GyroZ,";
+      String headString = "Date,Time,BoardTemp,MPUTemp,TeensyTemp,AccX,AccY,AccZ,GyroX,GyroY,GyroZ,";
       dataFile.print(headString);
       headString = "Sats,Lat,Long,Meter,Kmh,Heading,Hdop,Age,RPM,MAP,TPS,IAT,CLT,Lambda,";
       dataFile.print(headString);
