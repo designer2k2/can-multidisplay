@@ -2,7 +2,7 @@
 # encoding=utf-8
 
 # Serial receiver
-# Teensy sends file over Serial
+# CanDisplay sends file over Serial
 # https://www.designer2k2.at
 # 2021.04.22
 
@@ -29,15 +29,19 @@ def serialtextreceiver(comport, filename):
             running = False
         stringfile += ser_byte.decode()
     ser.close()
-    print("Seems to have worked, Size received: {} bytes".format(len(stringfile)))
+    print("Seems to have worked, Total Size received: {} bytes".format(len(stringfile)))
 
     # trim the result:
     start = chr(2)
     end = chr(4)
     extract = (stringfile.split(start))[1].split(end)[0]
 
+    # prints the initial feedback:
+    print(stringfile.split(start)[0])
+    print("File Size received: {} bytes".format(len(extract)))
+
     # the file has \r\r\n so CR CR LF,  the double CR must go.
-    extract = extract.replace(r"\r\r\n", r"\r\n")
+    # extract = extract.replace(r"\r\r\n", r"\r\n")
 
     f = open("{}.txt".format(filename), "w")
     f.write(extract)
@@ -45,4 +49,4 @@ def serialtextreceiver(comport, filename):
 
 
 if __name__ == "__main__":
-    serialtextreceiver("COM5", "L210807")
+    serialtextreceiver("COM5", "L210903")

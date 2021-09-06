@@ -239,16 +239,20 @@ void SendFile(String FileName) {
   Serial.flush();
   //Check if Datalog is active! Do not send with active log
 
+  File dataFile = SD.open(FileName.c_str(), FILE_READ);
+
+  Serial.println("Filesize:" + String((unsigned long)dataFile.size()) + ".");
+
   //send the header:  ;FILENAME;SIZE;CREATED;LASTMODIFIED
   //Start: STX (2)
   Serial.write(char(2));
-
-  File dataFile = SD.open(FileName.c_str(), FILE_READ);
+  Serial.flush();
 
   // From: https://www.arduino.cc/en/Tutorial/LibraryExamples/DumpFile
   if (dataFile) {
     while (dataFile.available()) {
       Serial.write(dataFile.read());
+      //Serial.flush();
     }
     dataFile.close();
   }

@@ -4,8 +4,8 @@
 void datalogtask() {
   if (DebugPrint) {
     char timeStamp[25];
-    sprintf(timeStamp, "[%02d/%02d/%02d][%02d:%02d:%02d.%03ld],",
-            (year() - 2000), month(), day(), hour(), minute(), second(), (millis() - 300) % 1000);
+    sprintf(timeStamp, "[%02d/%02d/%02d][%02d:%02d:%02d.%03d],",
+            (year() - 2000), month(), day(), hour(), minute(), second(), (int)(millis() - 300) % 1000);
     Serial.print(timeStamp);
     Serial.println("Log will Run");
   }
@@ -17,17 +17,19 @@ void datalogtask2() {
   //This here builds the string to log, then write it to the SD
 
   // The millis rollover not in sync with the seconds,  so substract 300ms:
-  char timeStamp[25];
-  sprintf(timeStamp, "[%02d/%02d/%02d],%05d.%03ld,",
-          (year() - 2000), month(), day(), hour() * minute() * second(), (millis() - 300) % 1000);
+  char timeStamp[35];
+
+  uint16_t day_seconds;
+  day_seconds = hour() * 3600 +  minute() * 60  + second();
+
+  sprintf(timeStamp, "[%02d/%02d/%02d][%02d:%02d:%02d.%03d],%05u.%03d,",
+          (year() - 2000), month(), day(), hour(), minute(), second(), (int)(millis() - 300) % 1000, day_seconds, (int)(millis() - 300) % 1000);
 
   String dataString = "";
 
   dataString += timeStamp;
 
   //Temperature Sensor Data:
-  //dataString += String(lm75temp, 1);  //28.08.2021 remove LM75, mpu is enough
-  dataString += "0,";
   dataString += String(mpu.getTemp(), 1);
   dataString += ",";
   dataString += String(tempmonGetTemp(), 1);
@@ -127,11 +129,11 @@ void datalogtask2() {
       // Filesize is below 1, its new, so write a header instead:
       Serial.print("Generate Header for New Logfile:");
       Serial.println(filename);
-      String headString = "Date,Time,BoardTemp,MPUTemp,TeensyTemp,AccX,AccY,AccZ,GyroX,GyroY,GyroZ,";
+      String headString = "Date,Time,MPUTemp,TeensyTemp,AccX,AccY,AccZ,GyroX,GyroY,GyroZ,";
       dataFile.print(headString);
-      headString = "Sats,Lat,Long,Meter,Kmh,Heading,Hdop,Age,RPM,MAP,TPS,IAT,CLT,Lambda,";
+      headString = "Sats,Lat,Long,HMeter,Kmh,Heading,Hdop,Age,RPM,MAP,TPS,IAT,CLT,Lambda,";
       dataFile.print(headString);
-      headString = "PulseWidth,EGT1,EGT2,Batt,Baro,IgnAngle,LambdaCorr,Gear,Pwm1,Vss,EmuTemp,";
+      headString = "PulseWidth,EGT1,EGT2,Vbatt,Baro,IgnAngle,LambdaCorr,Gear,Pwm1,Vss,EmuTemp,";
       dataFile.print(headString);
       headString = "CEL,FLAGS1,LambdaTarget,OilTemp,OilPress,FuelUsed,CanState";
       dataFile.println(headString);
