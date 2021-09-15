@@ -209,15 +209,15 @@ void screen2run() {
   }
   tft.fillRect(81, 205, 2, 16, ILI9341_WHITE);
 
-  //Top the actual, bottom the target Lambda:
+  //Top the actual, bottom the target Lambda:  0.5 - 1.5 shown:
   int actLamb;
   int tarLamb;
   if (DemoMode) {
-    actLamb = (1.0 - (screen2var / 100.0)) * -180.0;
-    tarLamb = (1.0 - (2.0 - (screen2var / 100.0))) * -180.0;
+    actLamb = (1.0 - (screen2var / 100.0)) * -360.0;
+    tarLamb = (1.0 - (2.0 - (screen2var / 100.0))) * -360.0;
   } else {
-    actLamb = (1.0 - emucan.emu_data.wboLambda) * -180.0;
-    tarLamb = (1.0 - emucan.emu_data.lambdaTarget) * -180.0;
+    actLamb = (1.0 - emucan.emu_data.wboLambda) * -360.0;
+    tarLamb = (1.0 - emucan.emu_data.lambdaTarget) * -360.0;
   }
   actLamb = constrain(actLamb, -72, 72) + 82;
   tft.fillTriangle(actLamb - 3, 195, actLamb + 3, 195, actLamb, 210, ILI9341_GREEN);
