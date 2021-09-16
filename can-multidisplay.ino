@@ -147,15 +147,25 @@ float fuel_usage = 0;
 struct trip_data {
   unsigned long trip_distance_last = 0;
   float trip_distance = 0;
+  float distance_offset = 0;
   float fuel_offset = 0;
   float trip_fuel_average = 0;
   float trip_fuel_now = 0;
   unsigned long trip_time = 0;
+  long trip_time_offset = 0;
   float trip_fuel_used = 0;
   boolean trip_fuel_stationary = true;
+  unsigned long trip_last_saved = 0;
 };
 struct trip_data trip1;
-struct trip_data trip2;
+//struct trip_data trip2;
+
+struct trip_data_runtime {
+  unsigned long trip_save_time = 0;
+  float trip_save_fuel = 0;
+  boolean aboveVSS = false;
+};
+struct trip_data_runtime trip_runtime1;
 
 
 // Storage for MAX events
@@ -420,7 +430,9 @@ void setup() {
 
   //Restore Settings:
   screenactive = EEPROM.read(1);
-  EEPROM.get(5, fuel_used);
+
+  //Restore board computer:
+  board_computer_restore(&trip1, 1);
 
   //WS2812 LED Thread:
   leds.begin();

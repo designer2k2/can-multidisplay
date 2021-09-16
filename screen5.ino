@@ -4,6 +4,9 @@
 // Consumption:  Below 5kmh  = L/H,  else L/100km
 // Distance: oldvalue + (time now - time old) * (speed / 3.6)
 
+// Store on button Press, but auto store when:
+// * VSS goes below 2 kmh, but only if VSS was above 5 before (hysteresis)
+// * Last save is more than 5 minutes ago
 
 
 void screen5press(int X, int Y, int Z) {
@@ -11,10 +14,19 @@ void screen5press(int X, int Y, int Z) {
     lasttouch = millis();
     if (X > 160) {
       if (Y > 120) {
-        //switch screens
+        //switch screens  lower right
         ScreenSwitch();
       } else {
+        // Uper right:
         board_computer_reset(&trip1);
+      }
+    } else {
+      if (Y > 120) {
+        //lower left:
+        board_computer_restore(&trip1, 1);
+      } else {
+        // Uper left:
+        board_computer_save(&trip1, 1);
       }
     }
   }
@@ -69,6 +81,13 @@ void screen5run() {
   sprintf(sz, "Fuel now: %3.2fL, Average: %3.2f, Gear: %1u",
           trip1.trip_fuel_now, trip1.trip_fuel_average, emucan.emu_data.gear);
   tft.println(sz);
+
+  sprintf(sz, "Last Store: [%02d/%02d/%02d][%02d:%02d:%02d]",
+          (year(trip1.trip_last_saved) - 2000), month(trip1.trip_last_saved), day(trip1.trip_last_saved), hour(trip1.trip_last_saved), minute(trip1.trip_last_saved), second(trip1.trip_last_saved));
+  tft.println(sz);
+
+
+
 
 
   // Show CEL Infos if present:
@@ -126,10 +145,13 @@ void board_computer_calc(struct trip_data *tripdata) {
   //Distance with speed:
   float dist;
   dist = ((time_diff * this_speed) / 3600.0) / 1000.0; //Meter since last update
-  tripdata->trip_distance += dist; //adding KM -> Revised 28.08.2021 -> removed /1000 
+  tripdata->trip_distance =  tripdata->distance_offset + dist; //adding KM -> Revised 28.08.2021 -> removed /1000
 
   //Handle fuel used reset:
-  tripdata->trip_fuel_used =  fuel_used;
+  tripdata->trip_fuel_used =  tripdata->fuel_offset + fuel_used - trip_runtime1.trip_save_fuel;
+
+  //Trip time:
+  tripdata->trip_time = tripdata->trip_time_offset + this_time - trip_runtime1.trip_save_time;
 
   //Trip Fuel usage average:
   tripdata->trip_fuel_average = (100 / tripdata->trip_distance) * tripdata->trip_fuel_used;
@@ -149,18 +171,53 @@ void board_computer_calc(struct trip_data *tripdata) {
     tripdata->trip_fuel_now = tripdata->trip_fuel_now * 0.9 + fuel_usage * 0.1;
   }
 
-  //Trip time:
-  tripdata->trip_time = this_time;
 }
 
 // Call this to reset a trip:
 void board_computer_reset(struct trip_data *tripdata) {
+  Serial.println("Trip wiped");
   tripdata->trip_distance_last = 0;
   tripdata->trip_distance = 0;
   tripdata->fuel_offset = 0;
   tripdata->trip_fuel_average = 0;
   tripdata->trip_fuel_now = 0;
   tripdata->trip_time = 0;
+  tripdata->distance_offset = 0;
   tripdata->trip_fuel_used = 0;
   tripdata->trip_fuel_stationary = true;
+  tripdata->trip_last_saved = 0;
+  tripdata->trip_time_offset = millis() * -1;
+  trip_runtime1.trip_save_time = 0;
+  trip_runtime1.trip_save_fuel = 0;
+}
+
+// Call this to save a trip to a given slot:
+void board_computer_save(struct trip_data *tripdata, int storage_slot) {
+  tripdata->trip_last_saved = now();
+  tripdata->trip_time_offset = tripdata->trip_time;
+  tripdata->fuel_offset = tripdata->trip_fuel_used;
+  tripdata->distance_offset = tripdata->trip_distance;
+
+  //and for this run:
+  trip_runtime1.trip_save_time = millis();
+  trip_runtime1.trip_save_fuel = tripdata->trip_fuel_used;
+
+  //Starting with position 100 (keep the lower ones for other things
+  unsigned int eeAddress = 100;
+  EEPROM.put( eeAddress, *tripdata);
+  Serial.print("Trip stored, Size of Tripdata:");
+  Serial.println(sizeof(*tripdata));
+  Serial.print("Time:");
+  Serial.println(tripdata->trip_time_offset);
+  Serial.println(tripdata->trip_last_saved);
+}
+
+// Call this to restore a trip from a given slot:
+void board_computer_restore(struct trip_data *tripdata, int storage_slot) {
+  //First, wipe the trip:
+  // Read it:
+  unsigned int eeAddress = 100;
+  EEPROM.get( eeAddress, *tripdata );
+  Serial.print("Trip restored:");
+  Serial.println(tripdata->trip_time_offset);
 }
