@@ -65,7 +65,12 @@ void blinkythread() {
       // Blank out all
       if (rgb_status == 0) {
         for (int i = 0; i < leds.numPixels(); i++) {
-          leds.setBrightness(50);
+          // Light brightness low if night time:
+          if ((hour() < 7) && (hour() > 19)) {
+            leds.setBrightness(5);
+          } else {
+            leds.setBrightness(50);
+          }
           leds.setPixel(i, 0x00000000);
         }
         leds.show();
