@@ -46,6 +46,10 @@ void screen2press(int X, int Y, int Z) {
         //Upper Left:
         //Log toggle:
         datalogactive = !datalogactive;
+        //And store Bord Computer if logging stops:
+        if (!datalogactive) {
+          board_computer_save(&trip1, 1);
+        }
       } else {
         //Lower Left:
         //CAN Switch High with turnoff time

@@ -145,7 +145,7 @@ void board_computer_calc(struct trip_data *tripdata) {
   //Distance with speed:
   float dist;
   dist = ((time_diff * this_speed) / 3600.0) / 1000.0; //Meter since last update
-  tripdata->trip_distance =  tripdata->distance_offset + dist; //adding KM -> Revised 28.08.2021 -> removed /1000
+  tripdata->trip_distance += dist;
 
   //Handle fuel used reset:
   tripdata->trip_fuel_used =  tripdata->fuel_offset + fuel_used - trip_runtime1.trip_save_fuel;
@@ -214,10 +214,11 @@ void board_computer_save(struct trip_data *tripdata, int storage_slot) {
 
 // Call this to restore a trip from a given slot:
 void board_computer_restore(struct trip_data *tripdata, int storage_slot) {
-  //First, wipe the trip:
   // Read it:
   unsigned int eeAddress = 100;
   EEPROM.get( eeAddress, *tripdata );
+  //Restore the distance from the offset:
+  tripdata->trip_distance = tripdata->distance_offset;
   Serial.print("Trip restored:");
   Serial.println(tripdata->trip_time_offset);
 }
