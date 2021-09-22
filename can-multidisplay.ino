@@ -167,7 +167,6 @@ struct trip_data_runtime {
 };
 struct trip_data_runtime trip_runtime1;
 
-
 // Storage for MAX events
 struct max_event {
   struct emu_data_t emu_data_store;

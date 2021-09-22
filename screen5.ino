@@ -4,11 +4,6 @@
 // Consumption:  Below 5kmh  = L/H,  else L/100km
 // Distance: oldvalue + (time now - time old) * (speed / 3.6)
 
-// Store on button Press, but auto store when:
-// * VSS goes below 2 kmh, but only if VSS was above 5 before (hysteresis)
-// * Last save is more than 5 minutes ago
-
-
 void screen5press(int X, int Y, int Z) {
   if (millis() > lasttouch + 500) {
     lasttouch = millis();
@@ -125,10 +120,40 @@ char * TimeToString(unsigned long t)
 void board_computer_thread() {
   while (1) {
     board_computer_calc(&trip1);
+    board_computer_autosave(&trip1, 1);
     //board_computer_calc(&trip2);
     threads.delay(500);
     threads.yield();
   }
+}
+
+// Board Computer Autosave
+// * VSS goes below 2 kmh, but only if VSS was above 5 before (hysteresis)
+// * Last save is more than 5 minutes ago
+void board_computer_autosave(struct trip_data *tripdata, int storage_slot) {
+
+  //If speed goes below 2kmh and was above 5 before:
+  if (emucan.EMUcan_Status == EMUcan_RECEIVED_WITHIN_LAST_SECOND) {
+    if (emucan.emu_data.vssSpeed > 5) {
+      trip_runtime1.aboveVSS = true;
+    } else {
+      if (emucan.emu_data.vssSpeed < 2) {
+        if (trip_runtime1.aboveVSS = true) {
+          trip_runtime1.aboveVSS = false;
+          //Below treshhold and hysteresis ok:
+          board_computer_save(tripdata, storage_slot);
+          trip_runtime1.trip_save_time = millis();
+        }
+      }
+    }
+  }
+
+  //If last save is more than 5 minutes ago:
+  if ((millis() - trip_runtime1.trip_save_time) >= (5 * 60 * 1000)) {
+    trip_runtime1.trip_save_time = millis();
+    board_computer_save(tripdata, storage_slot);
+  }
+
 }
 
 // Run this at a static intervall:
@@ -203,7 +228,7 @@ void board_computer_save(struct trip_data *tripdata, int storage_slot) {
   trip_runtime1.trip_save_fuel = tripdata->trip_fuel_used;
 
   //Starting with position 100 (keep the lower ones for other things
-  unsigned int eeAddress = 100;
+  unsigned int eeAddress = 100 + 50 * (storage_slot - 1);
   EEPROM.put( eeAddress, *tripdata);
   Serial.print("Trip stored, Size of Tripdata:");
   Serial.println(sizeof(*tripdata));
@@ -215,7 +240,7 @@ void board_computer_save(struct trip_data *tripdata, int storage_slot) {
 // Call this to restore a trip from a given slot:
 void board_computer_restore(struct trip_data *tripdata, int storage_slot) {
   // Read it:
-  unsigned int eeAddress = 100;
+  unsigned int eeAddress = 100 + 50 * (storage_slot - 1);
   EEPROM.get( eeAddress, *tripdata );
   //Restore the distance from the offset:
   tripdata->trip_distance = tripdata->distance_offset;
