@@ -22,8 +22,8 @@ unsigned long arcsHighTime = 0;
 int mapHigh = 0;
 unsigned long mapHighTime = 0;
 
-CircularBuffer<byte, 150> bufferS;  //Framebuffer1 for the MAP Scope Data
-CircularBuffer<byte, 150> bufferS2;  //Framebuffer2 for the RPM Scope Data
+CircularBuffer<byte, 150> bufferS;  //Framebuffer1 for the MAP Scope Data, or TPS
+CircularBuffer<byte, 150> bufferS2;  //Framebuffer2 for the RPM Scope Data, or Lambda
 
 void screen2press(int X, int Y, int Z) {
   if (millis() > lasttouch + 1000) {
@@ -101,11 +101,13 @@ void screen2run() {
     }
   }
 
-  //Save RPM to the buffer:
+  //Save RPM/TPS to the buffer:
   if (DemoMode) {
     bufferS2.push(second() * 4);
   } else {
-    bufferS2.push(rpms / 56); //Scale max 7000rpm to fit inside 0-125
+    //bufferS2.push(rpms / 56); //Scale max 7000rpm to fit inside 0-125
+    bufferS2.push(emucan.emu_data.TPS * 1.25); //Scale max 100 to fit inside 0-125
+
   }
 
   unsigned int arcs = rpms / 26.0;
@@ -128,9 +130,9 @@ void screen2run() {
   drawArc(80, 120, 74, 5, rev_limiter / 26 + 135, 45, tft.color565(255, 0, 0)); // slight 3D effect
   drawArc(80, 120, 69, 5, rev_limiter / 26 + 135, 45, tft.color565(128, 0, 0)); // slight 3D effect
 
-  //RPM Store high, and drop after 3 sec by 5deg each round
+  //RPM Store high, and drop after 10 sec by 5deg each round
   uint16_t rpmcolor = ILI9341_RED;
-  if ((millis() - arcsHighTime) > 3000) {
+  if ((millis() - arcsHighTime) > 10000) {
     if (arcsHigh > 5) {
       arcsHigh -= 5;
     }
@@ -155,13 +157,17 @@ void screen2run() {
     if (screen2var > 180) {
       screen2var = 0;
     }
+    bufferS.push(screen2var * 1.4);
   } else {
     screen2var = emucan.emu_data.MAP;
   }
 
   //Save the MAP to the buffer too:
-  bufferS.push(screen2var * 1.4);
-
+  //bufferS.push(screen2var * 1.4);
+  // or Lambda:
+  int LambBuf = (emucan.emu_data.wboLambda * 125) - 65; //(0-125 for lambda 0.5 to 1.5)
+  LambBuf = constrain(LambBuf , 0, 125);
+  bufferS.push(LambBuf);
 
   int MapArc = screen2var * 1.5;
   MapArc += 135;
@@ -171,11 +177,11 @@ void screen2run() {
   drawArc(80, 120, 35, 2, 135, MapArc, tft.color565(64, 64, 0));
   drawArc(80, 120, 33, 2, 135, MapArc, tft.color565(32, 32, 0));
 
-  //MAP Store high, and drop after 3 sec by 5deg each round
+  //MAP Store high, and drop after 10 sec by 3deg each round
   rpmcolor = ILI9341_RED;
-  if ((millis() - mapHighTime) > 1000) {
-    if (mapHigh > 5) {
-      mapHigh -= 5;
+  if ((millis() - mapHighTime) > 10000) {
+    if (mapHigh > 3) {
+      mapHigh -= 3;
     }
     rpmcolor = ILI9341_BLUE;
   }
@@ -183,7 +189,7 @@ void screen2run() {
     mapHigh = MapArc;
     mapHighTime = millis();
   }
-  drawArc(80, 120, 44, 9, mapHigh - 3, mapHigh + 3, rpmcolor);
+  drawArc(80, 120, 44, 9, mapHigh - 4, mapHigh + 4, rpmcolor);
 
   //MAP 100 mark (100*1,5+135):
   drawArc(80, 120, 44, 7, 285 - 3, 285 + 3, ILI9341_DARKGREY);
