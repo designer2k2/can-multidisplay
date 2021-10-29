@@ -73,8 +73,8 @@ void screen4run() {
   sprintf(sz, "IgnA %+.1f LCorr %+.1f EMUT %2i",
           emucan.emu_data.IgnAngle, emucan.emu_data.LambdaCorrection, emucan.emu_data.emuTemp);
   tft.println(sz);
-  sprintf(sz, "OilP %.1f OilT %3i RLim %4i",
-          emucan.emu_data.oilPressure, emucan.emu_data.oilTemperature, rev_limiter);
+  sprintf(sz, "OilP %.1f OilT %3i FuelP %.1f",
+          emucan.emu_data.oilPressure, emucan.emu_data.oilTemperature, emucan.emu_data.fuelPressure);
   tft.println(sz);
   sprintf(sz, "E Flag: " BYTE_TO_BINARY_PATTERN " Flags1 " BYTE_TO_BINARY_PATTERN "",
           BYTE_TO_BINARY(emucan.emu_data.cel), BYTE_TO_BINARY(emucan.emu_data.flags1));

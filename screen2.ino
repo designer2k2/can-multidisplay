@@ -105,8 +105,8 @@ void screen2run() {
   if (DemoMode) {
     bufferS2.push(second() * 4);
   } else {
-    //bufferS2.push(rpms / 56); //Scale max 7000rpm to fit inside 0-125
-    bufferS2.push(emucan.emu_data.TPS * 1.25); //Scale max 100 to fit inside 0-125
+    //bufferS2.push(rpms / 28); //Scale max 7000rpm to fit inside 0-256
+    bufferS2.push(emucan.emu_data.TPS * 2.55); //Scale max 100 to fit inside 0-256
 
   }
 
@@ -165,8 +165,8 @@ void screen2run() {
   //Save the MAP to the buffer too:
   //bufferS.push(screen2var * 1.4);
   // or Lambda:
-  int LambBuf = (emucan.emu_data.wboLambda * 125) - 65; //(0-125 for lambda 0.5 to 1.5)
-  LambBuf = constrain(LambBuf , 0, 125);
+  int LambBuf = (emucan.emu_data.wboLambda * 250) - 125; //(0-255 for lambda 0.5 to 1.5)
+  LambBuf = constrain(LambBuf , 0, 250);
   bufferS.push(LambBuf);
 
   int MapArc = screen2var * 1.5;
@@ -415,7 +415,7 @@ void screen2run() {
   }
   pbar(v, 157, 70, 10, 100, false, ILI9341_DARKCYAN, ILI9341_CYAN);
 
-  //Small Plot:
+  //Small Plot: (64px height, 256bit buffer/4)
   using index_t = decltype(bufferS)::index_t;
   for (index_t i = 0; i < bufferS.size(); i++) {
     tft.fillCircle(i + 170, 194 - (bufferS[i]) / 4, 1, ILI9341_GREENYELLOW);
