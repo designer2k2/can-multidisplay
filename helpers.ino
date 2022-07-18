@@ -174,7 +174,7 @@ void CommandHandler(String commandtext) {
     SendFile(commandtext.substring(4));
   }
   else if (commandtext.substring(0, 3) == "c:v") {
-    Serial.println("Version: 1.0");
+    Serial.println("Version: 1.01");
   }
   else if (commandtext.substring(0, 3) == "c:l") {
     ListFile();
@@ -399,7 +399,7 @@ void specialframefunction(const CAN_message_t *frame) {
 
   if (frame->id == 0x520) {
     //Byte 0 = Lambda Target * 128
-    emucan.emu_data.lambdaTarget = frame->buf[0] / 128.0;
+    //emucan.emu_data.lambdaTarget = frame->buf[0] / 128.0;
   }
 
   if (frame->id == 0x521) {
@@ -407,7 +407,7 @@ void specialframefunction(const CAN_message_t *frame) {
     //Byte 1/2 = Fuel used * 100
     //Byte 3/4 = Fuel usage * 100
     //rev_limiter = frame->buf[0] * 50; thats only 0/1 not the actual value
-    fuel_used = ((frame->buf[2] << 8) + frame->buf[1]) / 100.0;  // Send 16bit unsigned little endian
+    //fuel_used = ((frame->buf[2] << 8) + frame->buf[1]) / 100.0;  // Send 16bit unsigned little endian
     fuel_usage = ((frame->buf[4] << 8) + frame->buf[3]) / 100.0; // Send 16bit unsigned little endian
   }
 

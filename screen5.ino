@@ -138,7 +138,7 @@ void board_computer_autosave(struct trip_data *tripdata, int storage_slot) {
       trip_runtime1.aboveVSS = true;
     } else {
       if (emucan.emu_data.vssSpeed < 2) {
-        if (trip_runtime1.aboveVSS = true) {
+        if (trip_runtime1.aboveVSS) {
           trip_runtime1.aboveVSS = false;
           //Below treshhold and hysteresis ok:
           board_computer_save(tripdata, storage_slot);
@@ -173,7 +173,7 @@ void board_computer_calc(struct trip_data *tripdata) {
   tripdata->trip_distance += dist;
 
   //Handle fuel used reset:
-  tripdata->trip_fuel_used =  tripdata->fuel_offset + fuel_used - trip_runtime1.trip_save_fuel;
+  tripdata->trip_fuel_used =  tripdata->fuel_offset + emucan.emu_data.fuel_used - trip_runtime1.trip_save_fuel;
 
   //Trip time:
   tripdata->trip_time = tripdata->trip_time_offset + this_time - trip_runtime1.trip_save_time;

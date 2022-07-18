@@ -1,7 +1,7 @@
 // Can Display
 // https://www.designer2k2.at
 // Target: Teensy 4.0 with Cut VUSB trace
-// Arduino 1.8.13 with Teensyduino 1.53, Teensy 4.0 with 396MHZ seems enough (and runs cooler)
+// Arduino 1.8.19 with Teensyduino 1.56, Teensy 4.0 with 396MHZ seems enough (and runs cooler)
 
 // ToDo: (* = open,  1-9 completeness where 9 = testet)
 // 9 Teensy Test with USB Power (TPS2113A selector)
@@ -140,7 +140,6 @@ unsigned long CAN_Switch_turnoff = 0;
 
 // Extra CAN Infos:
 unsigned int rev_limiter = 6500;  //Pre load with 6500
-float fuel_used = 0;
 float fuel_usage = 0;
 
 // Board computer things:
