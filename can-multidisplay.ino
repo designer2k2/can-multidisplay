@@ -38,6 +38,9 @@
 // Teensy 4: https://www.pjrc.com/teensy/IMXRT1060RM_rev2.pdf
 // There is a "SYNCH" Bit, that should show if the Speed is ok
 
+// Onboard LED:
+#define ONBOARD_LED  33
+
 // Image test:
 #include "Dlogominiature.c"
 
@@ -189,20 +192,20 @@ void setup() {
   Serial.begin(115200);
 
   // LED on PCB:
-  pinMode(33, OUTPUT);
+  pinMode(ONBOARD_LED, OUTPUT);
   //Led toggle: 33 = FlexPWM2.0 (Pin 4 and 33) for
-  analogWriteFrequency(33, 515625); //515625 for 396mhz 8 bit: https://www.pjrc.com/teensy/td_pulse.html
-  analogWrite(33, 255);
+  analogWriteFrequency(ONBOARD_LED, 515625); //515625 for 396mhz 8 bit: https://www.pjrc.com/teensy/td_pulse.html
+  analogWrite(ONBOARD_LED, 255);
 
   Wire.begin();
   //Wire.setClock(400000);
 
-  analogWrite(33, 0);
+  analogWrite(ONBOARD_LED, 0);
 
   // set the Time library to use Teensy 4.0's RTC to keep time
   setSyncProvider(getTeensy3Time);
 
-  analogWrite(33, 255);
+  analogWrite(ONBOARD_LED, 255);
 
   // Wait for Arduino Serial Monitor to open
   //while (!Serial);
@@ -213,7 +216,7 @@ void setup() {
   Serial.print("F_CPU_ACTUAL=");
   Serial.println(F_CPU_ACTUAL);
 
-  analogWrite(33, 0);
+  analogWrite(ONBOARD_LED, 0);
 
   //I2C Scanner:
   i2cscanner();

@@ -142,9 +142,9 @@ void debugLEDtoggle() {
   //Led toggle: 33 = FlexPWM2.0 (Pin 4 and 33) for
   ledshine = !ledshine;
   if (ledshine) {
-    analogWrite(33, 10); //5 is enough, very bright led...
+    analogWrite(ONBOARD_LED, 10); //5 is enough, very bright led...
   } else {
-    analogWrite(33, 0);
+    analogWrite(ONBOARD_LED, 0);
   }
 }
 
