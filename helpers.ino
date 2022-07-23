@@ -164,6 +164,7 @@ void CommandHandler(String commandtext) {
     Serial.println("c:d:i for a I2C Scann Result");
     Serial.println("c:d:d toggle Debug Infos");
     Serial.println("c:d:s Serial bridge to the GPS Module");
+    Serial.println("c:d:c Serial print all CAN messages");
     Serial.println("c:d:w:1000  Wait with Delay 1000");
     Serial.println("c:d:h:200 converts heading to Text (200=NW)");
     Serial.println("c:d:r:123023 send pixel color from 123 023");
@@ -189,6 +190,10 @@ void CommandHandler(String commandtext) {
   else if (commandtext.substring(0, 5) == "c:d:s") {
     //Serial Bridge to GPS
     SerialBridge = !SerialBridge;
+  }
+  else if (commandtext.substring(0, 5) == "c:d:c") {
+    //Debug print CAN to Serial
+    CanDebugPrint = !CanDebugPrint;
   }
   else if (commandtext.substring(0, 5) == "c:d:w") {
     //Delay with given time (c:d:w:1000 = 1Sec)
@@ -408,9 +413,23 @@ void specialframefunction(const CAN_message_t *frame) {
     //Byte 3/4 = Fuel usage * 100
     //rev_limiter = frame->buf[0] * 50; thats only 0/1 not the actual value
     //fuel_used = ((frame->buf[2] << 8) + frame->buf[1]) / 100.0;  // Send 16bit unsigned little endian
-    fuel_usage = ((frame->buf[4] << 8) + frame->buf[3]) / 100.0; // Send 16bit unsigned little endian
+    fuel_usage = ((frame->buf[4] << 8) + frame->buf[3]) * 0.01; // Send 16bit unsigned little endian
   }
 
+  // if can debug is choosen print every frame to the serial port:
+  if (CanDebugPrint) {
+    Serial.print(frame->id, HEX); // print ID
+    Serial.print(" ");
+    Serial.print(frame->len, HEX); // print DLC
+    Serial.print(" ");
+
+    for (int i = 0; i < frame->len; i++)  { // print the data
+      Serial.print(frame->buf[i], HEX);
+      Serial.print(" ");
+    }
+
+    Serial.println();
+  }
 
 }
 

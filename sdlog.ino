@@ -73,7 +73,7 @@ void datalogtask2() {
   dataString += ",";
   dataString += String(emucan.emu_data.MAP);
   dataString += ",";
-  dataString += String(emucan.emu_data.TPS);
+  dataString += String(emucan.emu_data.TPS,1);
   dataString += ",";
   dataString += String(emucan.emu_data.IAT);
   dataString += ",";
@@ -91,9 +91,9 @@ void datalogtask2() {
   dataString += ",";
   dataString += String(emucan.emu_data.Baro);
   dataString += ",";
-  dataString += String(emucan.emu_data.IgnAngle, 0);
+  dataString += String(emucan.emu_data.IgnAngle, 1);
   dataString += ",";
-  dataString += String(emucan.emu_data.LambdaCorrection, 0);
+  dataString += String(emucan.emu_data.LambdaCorrection, 1);
   dataString += ",";
   dataString += String(emucan.emu_data.gear);
   dataString += ",";

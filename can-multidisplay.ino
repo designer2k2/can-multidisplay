@@ -135,6 +135,7 @@ int screenactive = 1;
 // Global Debug Flag:
 bool DebugPrint = false;
 bool SerialBridge = false;
+bool CanDebugPrint = false;
 
 // CAN Switch States:
 bool CAN_Switch_1 = false;
