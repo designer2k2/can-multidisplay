@@ -24,6 +24,7 @@ jobs:
           fqbn: "teensy:avr:teensy40"
           libraries: |
             - source-url: https://github.com/KurtE/ILI9341_t3n/archive/refs/tags/V1.1.0.zip
+            - name: "I2C Temperature Sensors derived from the LM75"
             - name: "TinyGPSPlus"
             - name: "EMUcanT4"
             - name: "MPU6050_light"
