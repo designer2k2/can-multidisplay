@@ -30,3 +30,4 @@ jobs:
             - name: "MPU6050_light"
             - name: "ADS1X15"
             - name: "Adafruit GFX Library"
+            - name: "CircularBuffer"
