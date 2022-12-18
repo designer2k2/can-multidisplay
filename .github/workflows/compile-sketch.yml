@@ -1,0 +1,30 @@
+name: Compile Sketch
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  compile-sketch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Compile 
+        uses: arduino/compile-sketches@main
+        with:
+          platforms: |
+            - name: "teensy:avr"
+              source-url: https://www.pjrc.com/teensy/td_156/package_teensy_index.json
+              version: "1.57.0"
+          sketch-paths: |
+            - source-path: ./can-multidisplay.ino
+          fqbn: "teensy:avr:teensy40"
+          libraries: |
+            - name: "ILI9341_t3n"
+            - name: "TinyGPSPlus"
+            - name: "EMUcanT4"
+            - name: "MPU6050_light"
+            - name: "ADS1X15"
