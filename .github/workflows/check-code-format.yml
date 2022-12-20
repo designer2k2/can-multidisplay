@@ -20,7 +20,7 @@ jobs:
     - name: Copy the clang format
       run: |
         cp "./scripts/.clang-format" "ci/.clang-format"
-        //chmod 777 "./.clang-format"
+        # chmod 777 "./.clang-format"
 
     - name: clang
       run: python3 ci/run-clang-format.py -e "ci/*" -e "bin/*" -e "./res/*" --extensions "ino" --style ".clang-format" -r . 
