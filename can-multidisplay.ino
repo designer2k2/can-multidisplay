@@ -39,7 +39,7 @@
 // There is a "SYNCH" Bit, that should show if the Speed is ok
 
 // Image test:
-#include "Dlogominiature.c"
+#include "res/Dlogominiature.c"
 
 // Threading:
 #include <Arduino.h>
@@ -63,10 +63,10 @@ CAN_message_t canMsg1;    //Message to be send
 #include <XPT2046_Touchscreen.h>
 #include <SPI.h>
 
-#include "font_AwesomeF000.h" // from ILI9341_fonts (modified for ILI9341_t3n)
+#include "res/font_AwesomeF000.c" // from ILI9341_fonts (modified for ILI9341_t3n)
 
 //Font test:
-#include "7segment20pt7b.h"
+#include "res/7segment20pt7b.h"
 
 
 DMAMEM uint16_t fb1[320 * 240]; //Framebuffer

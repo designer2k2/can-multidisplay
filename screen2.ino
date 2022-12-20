@@ -14,7 +14,7 @@
 
 #include <CircularBuffer.h>     //https://github.com/rlogiacco/CircularBuffer/
 
-#include "icons.c"    //Contains fancy icons
+#include "res/icons.c"    //Contains fancy icons
 
 int screen2var = 0;
 unsigned int arcsHigh = 0;
