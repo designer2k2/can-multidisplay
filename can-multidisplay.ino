@@ -145,7 +145,7 @@ float fuel_usage = 0;
 
 // Board computer things:
 struct trip_data {
- unsigned long trip_distance_last = 0; 
+  unsigned long trip_distance_last = 0;
   float trip_distance = 0;
   float distance_offset = 0;
   float fuel_offset = 0;
