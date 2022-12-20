@@ -23,4 +23,4 @@ jobs:
         # chmod 777 "./.clang-format"
 
     - name: clang
-      run: python3 ci/run-clang-format.py -e "ci/*" -e "bin/*" -e "./res/*" --extensions "ino" --style ".clang-format" -r . 
+      run: python3 ci/run-clang-format.py -e "ci/*" -e "bin/*" -e "./res/*" --extensions "ino" --style "file" -r . 
