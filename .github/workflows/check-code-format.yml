@@ -19,4 +19,4 @@ jobs:
          path: ci
 
     - name: clang
-      run: python3 ci/run-clang-format.py -e "ci/*" -e "bin/*" -e "./res/*" -r . 
+      run: python3 ci/run-clang-format.py -e "ci/*" -e "bin/*" -e "./res/*" --extensions "ino" -r . 
