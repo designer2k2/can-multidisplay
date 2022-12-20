@@ -19,7 +19,7 @@ jobs:
          path: ci
     - name: Copy the clang format
       run: |
-        cp "./scripts/.clang-format" ".clang-format"
+        cp "./scripts/.clang-format" "./clang-format"
 
     - name: clang
-      run: python3 ci/run-clang-format.py -e "ci/*" -e "bin/*" -e "./res/*" --extensions "ino" --clang-format-executable ".clang-format" -r . 
+      run: python3 ci/run-clang-format.py -e "ci/*" -e "bin/*" -e "./res/*" --extensions "ino" --clang-format-executable "./clang-format" -r . 
