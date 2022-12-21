@@ -9,9 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/setup-python@v4
-      with:
-        python-version: '3.x'
     - uses: actions/checkout@v3
     - uses: actions/checkout@v3
       with:
@@ -27,6 +24,5 @@ jobs:
     - name: Run clang-format style check for C/C++/Protobuf programs.
       uses: jidicula/clang-format-action@v4.9.0
       with:
-        clang-format-version: '14'
-        exclude-regex: '(apta|res)'
+        exclude-regex: 'res'
         
