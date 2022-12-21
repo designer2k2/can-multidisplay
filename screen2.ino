@@ -12,9 +12,9 @@
    Öldruck Anzeigen
 */
 
-#include <CircularBuffer.h>     //https://github.com/rlogiacco/CircularBuffer/
+#include <CircularBuffer.h>  //https://github.com/rlogiacco/CircularBuffer/
 
-#include "icons.c"    //Contains fancy icons
+#include "res/icons.c"  //Contains fancy icons
 
 int screen2var = 0;
 unsigned int arcsHigh = 0;
@@ -22,7 +22,7 @@ unsigned long arcsHighTime = 0;
 int mapHigh = 0;
 unsigned long mapHighTime = 0;
 
-CircularBuffer<byte, 150> bufferS;  //Framebuffer1 for the MAP Scope Data, or TPS
+CircularBuffer<byte, 150> bufferS;   //Framebuffer1 for the MAP Scope Data, or TPS
 CircularBuffer<byte, 150> bufferS2;  //Framebuffer2 for the RPM Scope Data, or Lambda
 
 void screen2press(int X, int Y, int Z) {
@@ -37,11 +37,11 @@ void screen2press(int X, int Y, int Z) {
         //Upper Right:
         //Toggle CAN Switch
         CAN_Switch_1 = !CAN_Switch_1;
-        Serial.print("Switch 1: "); Serial.println(CAN_Switch_1);
+        Serial.print("Switch 1: ");
+        Serial.println(CAN_Switch_1);
         Send_CAN_Switch_States();
       }
-    } else
-    {
+    } else {
       if (Y < 120) {
         //Upper Left:
         //Log toggle:
@@ -55,7 +55,8 @@ void screen2press(int X, int Y, int Z) {
         //CAN Switch High with turnoff time
         CAN_Switch_2 = true;
         CAN_Switch_turnoff = millis() + 1000;
-        Serial.print("Switch 2: "); Serial.println(CAN_Switch_2);
+        Serial.print("Switch 2: ");
+        Serial.println(CAN_Switch_2);
         Send_CAN_Switch_States();
       }
     }
@@ -106,8 +107,7 @@ void screen2run() {
     bufferS2.push(second() * 4);
   } else {
     //bufferS2.push(rpms / 28); //Scale max 7000rpm to fit inside 0-256
-    bufferS2.push(emucan.emu_data.TPS * 2.55); //Scale max 100 to fit inside 0-256
-
+    bufferS2.push(emucan.emu_data.TPS * 2.55);  //Scale max 100 to fit inside 0-256
   }
 
   unsigned int arcs = rpms / 26.0;
@@ -116,19 +116,19 @@ void screen2run() {
     drawArc(80, 120, 74, 13, 135, arcs, tft.color565(0, 255, 0));
     drawArc(80, 120, 61, 2, 135, arcs, tft.color565(0, 192, 0));  // slight 3D effect
     drawArc(80, 120, 59, 2, 135, arcs, tft.color565(0, 128, 0));  // slight 3D effect
-    drawArc(80, 120, 57, 2, 135, arcs, tft.color565(0, 64, 0));  // slight 3D effect
-    drawArc(80, 120, 55, 2, 135, arcs, tft.color565(0, 32, 0));  // slight 3D effect
+    drawArc(80, 120, 57, 2, 135, arcs, tft.color565(0, 64, 0));   // slight 3D effect
+    drawArc(80, 120, 55, 2, 135, arcs, tft.color565(0, 32, 0));   // slight 3D effect
   } else {
     drawArc(80, 120, 74, 13, 135, arcs, tft.color565(255, 0, 0));
     drawArc(80, 120, 61, 2, 135, arcs, tft.color565(192, 0, 0));  // slight 3D effect
     drawArc(80, 120, 59, 2, 135, arcs, tft.color565(128, 0, 0));  // slight 3D effect
-    drawArc(80, 120, 57, 2, 135, arcs, tft.color565(64, 0, 0));  // slight 3D effect
-    drawArc(80, 120, 55, 2, 135, arcs, tft.color565(32, 0, 0));  // slight 3D effect
+    drawArc(80, 120, 57, 2, 135, arcs, tft.color565(64, 0, 0));   // slight 3D effect
+    drawArc(80, 120, 55, 2, 135, arcs, tft.color565(32, 0, 0));   // slight 3D effect
   }
 
   // RPM warn area:
-  drawArc(80, 120, 74, 5, rev_limiter / 26 + 135, 45, tft.color565(255, 0, 0)); // slight 3D effect
-  drawArc(80, 120, 69, 5, rev_limiter / 26 + 135, 45, tft.color565(128, 0, 0)); // slight 3D effect
+  drawArc(80, 120, 74, 5, rev_limiter / 26 + 135, 45, tft.color565(255, 0, 0));  // slight 3D effect
+  drawArc(80, 120, 69, 5, rev_limiter / 26 + 135, 45, tft.color565(128, 0, 0));  // slight 3D effect
 
   //RPM Store high, and drop after 10 sec by 5deg each round
   uint16_t rpmcolor = ILI9341_RED;
@@ -165,8 +165,8 @@ void screen2run() {
   //Save the MAP to the buffer too:
   //bufferS.push(screen2var * 1.4);
   // or Lambda:
-  int LambBuf = (emucan.emu_data.wboLambda * 250) - 125; //(0-255 for lambda 0.5 to 1.5)
-  LambBuf = constrain(LambBuf , 0, 250);
+  int LambBuf = (emucan.emu_data.wboLambda * 250) - 125;  //(0-255 for lambda 0.5 to 1.5)
+  LambBuf = constrain(LambBuf, 0, 250);
   bufferS.push(LambBuf);
 
   int MapArc = screen2var * 1.5;
@@ -470,8 +470,7 @@ void screen2run() {
   tft.setCursor(0, 0);
   if (gps.hdop.hdop() < 3.0) {
     tft.setTextColor(ILI9341_GREEN);
-  }
-  else {
+  } else {
     tft.setTextColor(ILI9341_ORANGE);
   }
   tft.print(char(18));  // 18 = Signal Bar https://hackaday.io/project/7330/gallery#db8ed33fc293ae63248b1d5737a3f128
@@ -489,8 +488,7 @@ void screen2run() {
   if (datalogactive) {
     tft.setTextColor(ILI9341_GREEN);
     tft.print(char(75));  // 75 = play, 76 = pause https://hackaday.io/project/7330/gallery#db8ed33fc293ae63248b1d5737a3f128
-  }
-  else {
+  } else {
     tft.setTextColor(ILI9341_DARKGREY);
     tft.print(char(76));  //  75 = play, 76 = pause https://hackaday.io/project/7330/gallery#db8ed33fc293ae63248b1d5737a3f128
   }
