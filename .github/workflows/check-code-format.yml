@@ -15,12 +15,17 @@ jobs:
     - uses: actions/checkout@v3
     - uses: actions/checkout@v3
       with:
-         repository: Sarcasm/run-clang-format
-         path: ci
+         repository: arduino/tooling-project-assets
+         path: atpa
+    
     - name: Copy the clang format
       run: |
-        cp "./scripts/.clang-format" "./.clang-format"
+        cp "./atpa/other/clang-format-configuration/.clang-format" "./.clang-format"
         # chmod 777 "./.clang-format"
 
-    - name: clang
-      run: python3 ci/run-clang-format.py -e "ci/*" -e "bin/*" -e "./res/*" --extensions "ino" --style "file:./.clang-format" -r . 
+    - name: Run clang-format style check for C/C++/Protobuf programs.
+      uses: jidicula/clang-format-action@v4.9.0
+      with:
+        clang-format-version: '14'
+        exclude-regex: 'res'
+        
