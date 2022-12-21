@@ -20,7 +20,7 @@ void datalogtask2() {
   char timeStamp[35];
 
   uint16_t day_seconds;
-  day_seconds = hour() * 3600 +  minute() * 60  + second();
+  day_seconds = hour() * 3600 + minute() * 60 + second();
 
   sprintf(timeStamp, "[%02d/%02d/%02d][%02d:%02d:%02d.%03d],%05u.%03d,",
           (year() - 2000), month(), day(), hour(), minute(), second(), (int)(millis() - 300) % 1000, day_seconds, (int)(millis() - 300) % 1000);
@@ -115,7 +115,7 @@ void datalogtask2() {
   dataString += ",";
   dataString += String(fuel_used);
   dataString += ",";
-  dataString += String(emucan.can_error_data.state[1]); //Only first character
+  dataString += String(emucan.can_error_data.state[1]);  //Only first character
 
   //Create the filename: its LYYMMDD.TXT
   char filename[15];
@@ -149,7 +149,6 @@ void datalogtask2() {
   else {
     Serial.println("error opening datalog.txt");
   }
-
 }
 
 void dateTime(uint16_t* date, uint16_t* time) {

@@ -11,8 +11,7 @@
 // 4 bit = 16, thats enough for numbers https://stackoverflow.com/questions/48883329/encoding-two-numbers-in-a-4-bit-binary-string
 // so this will cut the transmit in half, but it must be directly received, as it contains non string things.
 
-void screenshotToConsole()
-{
+void screenshotToConsole() {
   uint8_t lastColor[3];
   uint8_t color[3];
   uint32_t totalImageDataLength = 0;
@@ -37,29 +36,22 @@ void screenshotToConsole()
   totalImageDataLength += 6;
   sameColorStartIndex = 0;
 
-  for (uint32_t i = 1; i < (320 * 240); i++)
-  {
+  for (uint32_t i = 1; i < (320 * 240); i++) {
     coltodecode = fb1[i];
     tft.color565toRGB(coltodecode, r, g, b);
     color[0] = r;
     color[1] = g;
     color[2] = b;
 
-    if (color[0] != lastColor[0] ||
-        color[1] != lastColor[1] ||
-        color[2] != lastColor[2])
-    {
+    if (color[0] != lastColor[0] || color[1] != lastColor[1] || color[2] != lastColor[2]) {
       sameColorPixelCount = i - sameColorStartIndex;
-      if (sameColorPixelCount > 65535)
-      {
+      if (sameColorPixelCount > 65535) {
         sameColorPixelCount16 = 65535;
         printHex16(&sameColorPixelCount16, 1);
         printHex8(lastColor, 3);
         totalImageDataLength += 10;
         sameColorPixelCount16 = sameColorPixelCount - 65535;
-      }
-      else
-      {
+      } else {
         sameColorPixelCount16 = sameColorPixelCount;
       }
       printHex16(&sameColorPixelCount16, 1);
@@ -71,18 +63,15 @@ void screenshotToConsole()
       lastColor[1] = color[1];
       lastColor[2] = color[2];
     }
-
   }
   sameColorPixelCount = 320 * 240 - sameColorStartIndex;
-  if (sameColorPixelCount > 65535)
-  {
+  if (sameColorPixelCount > 65535) {
     sameColorPixelCount16 = 65535;
     printHex16(&sameColorPixelCount16, 1);
     printHex8(lastColor, 3);
     totalImageDataLength += 10;
     sameColorPixelCount16 = sameColorPixelCount - 65535;
-  }
-  else
+  } else
     sameColorPixelCount16 = sameColorPixelCount;
   printHex16(&sameColorPixelCount16, 1);
   totalImageDataLength += 4;
@@ -95,7 +84,7 @@ void screenshotToConsole()
 }
 
 // Helpers:
-void printHex8(uint8_t *data, uint8_t length) // prints 8-bit data in hex
+void printHex8(uint8_t *data, uint8_t length)  // prints 8-bit data in hex
 {
   char tmp[length * 2 + 1];
   byte first;
@@ -114,7 +103,7 @@ void printHex8(uint8_t *data, uint8_t length) // prints 8-bit data in hex
   tmp[length * 2] = 0;
   Serial.print(tmp);
 }
-void printHex16(uint16_t *data, uint8_t length) // prints 8-bit data in hex
+void printHex16(uint16_t *data, uint8_t length)  // prints 8-bit data in hex
 {
   char tmp[length * 4 + 1];
   byte first;
@@ -144,7 +133,7 @@ void printHex16(uint16_t *data, uint8_t length) // prints 8-bit data in hex
   Serial.print(tmp);
 }
 
-void printHex32(uint32_t *data, uint8_t length) // prints 8-bit data in hex
+void printHex32(uint32_t *data, uint8_t length)  // prints 8-bit data in hex
 {
   char tmp[length * 8 + 1];
   byte dataByte[8];

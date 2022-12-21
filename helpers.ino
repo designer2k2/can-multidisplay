@@ -1,6 +1,5 @@
 // Helper for the RTC Setup:
-time_t getTeensy3Time()
-{
+time_t getTeensy3Time() {
   return Teensy3Clock.get();
 }
 
@@ -10,19 +9,20 @@ extern float tempmonGetTemp(void);
 // I2C Scanner:
 byte start_address = 0;
 byte end_address = 127;
-void i2cscanner()
-{
+void i2cscanner() {
   byte rc;
 
   Serial.println("\nI2C Scanner");
 
   Serial.print("Scanning I2C bus from ");
-  Serial.print(start_address, DEC);  Serial.print(" to ");  Serial.print(end_address, DEC);
+  Serial.print(start_address, DEC);
+  Serial.print(" to ");
+  Serial.print(end_address, DEC);
   Serial.println("...");
 
-  for ( byte addr  = start_address;
-        addr <= end_address;
-        addr++ ) {
+  for (byte addr = start_address;
+       addr <= end_address;
+       addr++) {
     Wire.beginTransmission(addr);
     rc = Wire.endTransmission();
 
@@ -31,9 +31,11 @@ void i2cscanner()
     if (rc == 0) {
       Serial.print(" found!");
     } else {
-      Serial.print(" "); Serial.print(rc); Serial.print("     ");
+      Serial.print(" ");
+      Serial.print(rc);
+      Serial.print("     ");
     }
-    Serial.print( (addr % 8) == 7 ? "\n" : " ");
+    Serial.print((addr % 8) == 7 ? "\n" : " ");
   }
   Serial.println("\ndone");
 }
@@ -75,7 +77,7 @@ void blinkythread() {
         }
         leds.show();
         rgb_status = 1;
-      } //else {
+      }  //else {
       // First (Bottom) LED, is the NOS, Blue = Armed, Green = Active
       // Top 2 Shiftlight
       if (emucan.emu_data.RPM > 6500) {
@@ -91,13 +93,13 @@ void blinkythread() {
         rgb_status = 0;
       }
       // WAES active, BLUE, parametric 1, bottom:
-      if (emucan.emu_data.outflags1 & emucan.F_PO1 ) {
+      if (emucan.emu_data.outflags1 & emucan.F_PO1) {
         leds.setPixel(1, 0x000000FF);
         leds.show();
         rgb_status = 0;
       } else {
         // WAES Enabled, GREEN, Switch #3
-        if (emucan.emu_data.outflags3 & emucan.F_SW3  ) {
+        if (emucan.emu_data.outflags3 & emucan.F_SW3) {
           leds.setPixel(1, 0x00001000);
           leds.show();
           rgb_status = 0;
@@ -142,7 +144,7 @@ void debugLEDtoggle() {
   //Led toggle: 33 = FlexPWM2.0 (Pin 4 and 33) for
   ledshine = !ledshine;
   if (ledshine) {
-    analogWrite(33, 10); //5 is enough, very bright led...
+    analogWrite(33, 10);  //5 is enough, very bright led...
   } else {
     analogWrite(33, 0);
   }
@@ -169,47 +171,37 @@ void CommandHandler(String commandtext) {
     Serial.println("c:d:r:123023 send pixel color from 123 023");
     Serial.println("c:d:p Send Screenshot (print screen)");
     Serial.println("c:d:x:DATALOG.TXT removes DATALOG.TXT");
-  }
-  else if (commandtext.substring(0, 3) == "c:s") {
+  } else if (commandtext.substring(0, 3) == "c:s") {
     SendFile(commandtext.substring(4));
-  }
-  else if (commandtext.substring(0, 3) == "c:v") {
+  } else if (commandtext.substring(0, 3) == "c:v") {
     Serial.println("Version: 1.0");
-  }
-  else if (commandtext.substring(0, 3) == "c:l") {
+  } else if (commandtext.substring(0, 3) == "c:l") {
     ListFile();
-  }
-  else if (commandtext.substring(0, 5) == "c:d:i") {
+  } else if (commandtext.substring(0, 5) == "c:d:i") {
     i2cscanner();
-  }
-  else if (commandtext.substring(0, 5) == "c:d:d") {
+  } else if (commandtext.substring(0, 5) == "c:d:d") {
     //Toggle Debug Infos
     DebugPrint = !DebugPrint;
-  }
-  else if (commandtext.substring(0, 5) == "c:d:s") {
+  } else if (commandtext.substring(0, 5) == "c:d:s") {
     //Serial Bridge to GPS
     SerialBridge = !SerialBridge;
-  }
-  else if (commandtext.substring(0, 5) == "c:d:w") {
+  } else if (commandtext.substring(0, 5) == "c:d:w") {
     //Delay with given time (c:d:w:1000 = 1Sec)
     String rt = commandtext.substring(6);
     rt.trim();
     int wait = rt.toInt();
     Serial.println("Wait for (ms): " + String(wait));
     delay(wait);
-  }
-  else if (commandtext.substring(0, 5) == "c:d:h") {
+  } else if (commandtext.substring(0, 5) == "c:d:h") {
     //Heading Return (c:d:h:200 = NW)
     String rt = commandtext.substring(6);
     rt.trim();
     int heading = rt.toInt();
     Serial.println("Heading: " + String(heading) + " String: " + headingToText(heading));
-  }
-  else if (commandtext.substring(0, 3) == "c:p") {
+  } else if (commandtext.substring(0, 3) == "c:p") {
     // Switch to the next screen
     ScreenSwitch();
-  }
-  else if (commandtext.substring(0, 5) == "c:d:r") {
+  } else if (commandtext.substring(0, 5) == "c:d:r") {
     // Send the Pixel Color from the requested Pixel: 001002 = X1 Y2
     String rt = commandtext.substring(6);
     rt.trim();
@@ -221,19 +213,16 @@ void CommandHandler(String commandtext) {
     uint16_t coltodecode = fb1[x + y * 320];
     tft.color565toRGB(coltodecode, r, g, b);
     Serial.println(String(r) + ":" + String(g) + ":" + String(b));
-  }
-  else if (commandtext.substring(0, 5) == "c:d:p") {
+  } else if (commandtext.substring(0, 5) == "c:d:p") {
     // Send a Screenshot:
     screenshotToConsole();
-  }
-  else if (commandtext.substring(0, 5) == "c:d:x") {
+  } else if (commandtext.substring(0, 5) == "c:d:x") {
     // remove the given file
     String rt = commandtext.substring(6);
     rt.trim();
     Serial.print("Remove:" + rt + ":");
     Serial.println(String(SD.remove(rt.c_str())));
-  }
-  else {
+  } else {
     Serial.print("Command not recognized");
   }
 }
@@ -280,8 +269,8 @@ void ListFile() {
 // From https://www.arduino.cc/en/Tutorial/LibraryExamples/Listfiles
 void printDirectory(File dir, int numTabs) {
   while (true) {
-    File entry =  dir.openNextFile();
-    if (! entry) {
+    File entry = dir.openNextFile();
+    if (!entry) {
       // no more files
       break;
     }
@@ -314,7 +303,7 @@ int freeram() {
 // Heading to Text (N-NE-E)
 String headingToText(int angle) {
   // Valid angle: 0-360
-  String directions[] = {"N", "NO", "O", "SO", "S", "SW", "W", "NW", "N"};
+  String directions[] = { "N", "NO", "O", "SO", "S", "SW", "W", "NW", "N" };
   int index = round(angle / 45.0);
   return directions[index];
 }
@@ -346,7 +335,7 @@ void ScreenSwitch() {
       break;
   }
   // and store it:
-  EEPROM.write(1, screenactive);   //First Setting = active Screen
+  EEPROM.write(1, screenactive);  //First Setting = active Screen
 }
 
 // CAN Bus send Switch States:
@@ -356,10 +345,11 @@ void Send_CAN_Switch_States() {
     bitWrite(CAN_Switch_State, 0, CAN_Switch_1);
     bitWrite(CAN_Switch_State, 1, CAN_Switch_2);
     if (DebugPrint) {
-      Serial.print("Send Switch State over CAN: "); Serial.println(CAN_Switch_State, BIN);
+      Serial.print("Send Switch State over CAN: ");
+      Serial.println(CAN_Switch_State, BIN);
     }
     // Frame to be send:
-    canMsg1.id  = 0x0F6;
+    canMsg1.id = 0x0F6;
     canMsg1.len = 1;
     canMsg1.buf[0] = CAN_Switch_State;
     //Sends the frame;
@@ -376,12 +366,13 @@ void Send_CAN_GPS_Speed() {
   if ((emucan.EMUcan_Status == EMUcan_RECEIVED_WITHIN_LAST_SECOND) && (gps.location.isValid() == true)) {
     //gps.speed.kmph());  //double
     // GPS Speed = 8 Bit Unsigned
-    byte gps_speed = (byte) gps.speed.kmph();
+    byte gps_speed = (byte)gps.speed.kmph();
     if (DebugPrint) {
-      Serial.print("Send GPS Speed over CAN: "); Serial.println(gps_speed);
+      Serial.print("Send GPS Speed over CAN: ");
+      Serial.println(gps_speed);
     }
     // Frame to be send:
-    canMsg1.id  = 0x0F7;
+    canMsg1.id = 0x0F7;
     canMsg1.len = 1;
     canMsg1.buf[0] = gps_speed;
     //Sends the frame;
@@ -407,11 +398,9 @@ void specialframefunction(const CAN_message_t *frame) {
     //Byte 1/2 = Fuel used * 100
     //Byte 3/4 = Fuel usage * 100
     //rev_limiter = frame->buf[0] * 50; thats only 0/1 not the actual value
-    fuel_used = ((frame->buf[2] << 8) + frame->buf[1]) / 100.0;  // Send 16bit unsigned little endian
-    fuel_usage = ((frame->buf[4] << 8) + frame->buf[3]) / 100.0; // Send 16bit unsigned little endian
+    fuel_used = ((frame->buf[2] << 8) + frame->buf[1]) / 100.0;   // Send 16bit unsigned little endian
+    fuel_usage = ((frame->buf[4] << 8) + frame->buf[3]) / 100.0;  // Send 16bit unsigned little endian
   }
-
-
 }
 
 //Max Checker:
@@ -452,7 +441,7 @@ void max_event_checker() {
   }
 
   // Max oilt:
-  if (emucan.emu_data.oilTemperature  > emu_max_oilt.emu_data_store.oilTemperature) {
+  if (emucan.emu_data.oilTemperature > emu_max_oilt.emu_data_store.oilTemperature) {
     emu_max_oilt.emu_data_store = emucan.emu_data;
     strcpy(emu_max_oilt.max_event_time, sz);
   }
@@ -467,5 +456,4 @@ void max_event_checker() {
     emu_max_egt.emu_data_store = emucan.emu_data;
     strcpy(emu_max_egt.max_event_time, sz);
   }
-
 }
