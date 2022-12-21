@@ -17,11 +17,12 @@ jobs:
     
     - name: Copy the clang format
       run: |
-        cp "./atpa/other/clang-format-configuration/.clang-format" ".clang-format"
+        cp "/atpa/other/clang-format-configuration/.clang-format" ".clang-format"
         rm -r "./atpa"
 
     - name: Run clang-format style check for C/C++/Protobuf programs.
       uses: jidicula/clang-format-action@v4.9.0
       with:
+        clang-format-version: '14'
         exclude-regex: 'res'
         
