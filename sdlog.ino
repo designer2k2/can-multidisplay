@@ -1,4 +1,4 @@
-//SD Logging, run this in a intervall to get daily logfiles.
+//SD Logging, run this in a interval to get daily logfiles.
 
 //SD log entry point:
 void datalogtask() {
@@ -16,7 +16,7 @@ void datalogtask2() {
 
   //This here builds the string to log, then write it to the SD
 
-  // The millis rollover not in sync with the seconds,  so substract 300ms:
+  // The millis rollover not in sync with the seconds,  so subtract 300ms:
   char timeStamp[35];
 
   uint16_t day_seconds;

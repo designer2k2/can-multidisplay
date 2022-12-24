@@ -62,7 +62,7 @@ void printDigits(int digits) {
 //Thread for fancy colors:
 void blinkythread() {
   while (1) {
-    // Switch to something usefull if data is received:
+    // Switch to something useful if data is received:
     if (emucan.EMUcan_Status == EMUcan_RECEIVED_WITHIN_LAST_SECOND) {
       // Blank out all
       if (rgb_status == 0) {
@@ -397,7 +397,7 @@ void specialframefunction(const CAN_message_t *frame) {
     //Byte 0 = Rev Limiter / 50
     //Byte 1/2 = Fuel used * 100
     //Byte 3/4 = Fuel usage * 100
-    //rev_limiter = frame->buf[0] * 50; thats only 0/1 not the actual value
+    //rev_limiter = frame->buf[0] * 50; that's only 0/1 not the actual value
     fuel_used = ((frame->buf[2] << 8) + frame->buf[1]) / 100.0;   // Send 16bit unsigned little endian
     fuel_usage = ((frame->buf[4] << 8) + frame->buf[3]) / 100.0;  // Send 16bit unsigned little endian
   }

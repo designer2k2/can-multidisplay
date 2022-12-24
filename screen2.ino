@@ -46,7 +46,7 @@ void screen2press(int X, int Y, int Z) {
         //Upper Left:
         //Log toggle:
         datalogactive = !datalogactive;
-        //And store Bord Computer if logging stops:
+        //And store (Trip) Board Computer if logging stops:
         if (!datalogactive) {
           board_computer_save(&trip1, 1);
         }
