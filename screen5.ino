@@ -139,7 +139,7 @@ void board_computer_autosave(struct trip_data *tripdata, int storage_slot) {
       if (emucan.emu_data.vssSpeed < 2) {
         if (trip_runtime1.aboveVSS = true) {
           trip_runtime1.aboveVSS = false;
-          //Below treshold and hysteresis ok:
+          //Below threshold and hysteresis ok:
           board_computer_save(tripdata, storage_slot);
           trip_runtime1.trip_save_time = millis();
         }
