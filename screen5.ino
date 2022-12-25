@@ -1,4 +1,4 @@
-// Bord Computer
+// (Trip) Board Computer
 // Follow ~ the VAG style with a Single journey memory, and a Total journey memory: http://www.audihelp.com/auda-11-on_board_computer.html
 
 // Consumption:  Below 5kmh  = L/H,  else L/100km
@@ -139,7 +139,7 @@ void board_computer_autosave(struct trip_data *tripdata, int storage_slot) {
       if (emucan.emu_data.vssSpeed < 2) {
         if (trip_runtime1.aboveVSS = true) {
           trip_runtime1.aboveVSS = false;
-          //Below treshhold and hysteresis ok:
+          //Below threshold and hysteresis ok:
           board_computer_save(tripdata, storage_slot);
           trip_runtime1.trip_save_time = millis();
         }
@@ -154,7 +154,7 @@ void board_computer_autosave(struct trip_data *tripdata, int storage_slot) {
   }
 }
 
-// Run this at a static intervall:
+// Run this at a static interval:
 void board_computer_calc(struct trip_data *tripdata) {
   //Timestamp:
   unsigned long this_time = millis();

@@ -107,7 +107,7 @@ void screen4run() {
 
 
   if (emucan.over_run) {
-    tft.println("Overrun on CAN Bus! Loosing Data!");
+    tft.println("Overrun on CAN Bus! Losing Data!");
     tft.drawRect(0, 0, 320, 240, ILI9341_BLUE);
   }
 

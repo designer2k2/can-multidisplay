@@ -25,7 +25,7 @@
 // 9 Screenshot transfer & recovery, 450kb transmit, compressed to 65kb
 // 9 Send CAN Switch Status (8 of them)
 // 7 Send GPS Speed over CAN
-// 2 Bord computer -> finally as standalone lib
+// 2 Board (Trip) computer -> finally as standalone lib
 
 
 // Implement more: Lambda Target (multiply by 128), RPM Limit (in steps of 50), Fuel consumed (16 bit), VE ( 16 bit)
@@ -404,7 +404,7 @@ void setup() {
   //Turn of: GPGSA GPGSV GPGSV GPGSV GPGSV GPGLL GPTXT GPVTG
   //Switch to Standby (approx 1mA, any other send = wakeup:
   //gpsPort.print(F("$PMTK161,0*28\r\n"));
-  //L80-R Backup Battery: https://www.quectel.com/UploadImage/Downlad/Quectel_L80-R_Hardware_Design_V1.2.pdf
+  //L80-R Backup Battery: https://www.quectel.com/wp-content/uploads/2021/03/Quectel_L80-R_Hardware_Design_V1.3-1.pdf
 
   //Switch to GN-801 GPS Module:
   //https://content.arduino.cc/assets/Arduino-MKR-GPS-Shield_u-blox8-M8_ReceiverDescrProtSpec_UBX-13003221_Public.pdf

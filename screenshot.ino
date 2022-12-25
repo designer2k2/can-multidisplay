@@ -8,7 +8,7 @@
 
 
 // Future Idea:
-// 4 bit = 16, thats enough for numbers https://stackoverflow.com/questions/48883329/encoding-two-numbers-in-a-4-bit-binary-string
+// 4 bit = 16, that's enough for numbers https://stackoverflow.com/questions/48883329/encoding-two-numbers-in-a-4-bit-binary-string
 // so this will cut the transmit in half, but it must be directly received, as it contains non string things.
 
 void screenshotToConsole() {
