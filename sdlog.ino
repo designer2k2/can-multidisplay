@@ -73,7 +73,7 @@ void datalogtask2() {
   dataString += ",";
   dataString += String(emucan.emu_data.MAP);
   dataString += ",";
-  dataString += String(emucan.emu_data.TPS,1);
+  dataString += String(emucan.emu_data.TPS);
   dataString += ",";
   dataString += String(emucan.emu_data.IAT);
   dataString += ",";
