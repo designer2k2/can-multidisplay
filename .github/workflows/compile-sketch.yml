@@ -8,6 +8,9 @@ jobs:
   compile-sketch:
     runs-on: ubuntu-latest
 
+    env:
+      SKETCHES_REPORTS_PATH: sketches-reports
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
