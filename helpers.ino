@@ -401,12 +401,12 @@ void specialframefunction(const CAN_message_t *frame) {
     //Byte 0 = Rev Limiter / 50
     //Byte 1/2 = Fuel used * 100
     //Byte 3/4 = Fuel usage * 100
-    //rev_limiter = frame->buf[0] * 50; thats only 0/1 not the actual value
+    //rev_limiter = frame->buf[0] * 50; that's only 0/1 not the actual value
     //fuel_used = ((frame->buf[2] << 8) + frame->buf[1]) / 100.0;  // Send 16bit unsigned little endian
     fuel_usage = ((frame->buf[4] << 8) + frame->buf[3]) * 0.01;  // Send 16bit unsigned little endian
   }
 
-  // if can debug is choosen print every frame to the serial port:
+  // if can debug is chosen print every frame to the serial port:
   if (CanDebugPrint) {
     Serial.print(frame->id, HEX);  // print ID
     Serial.print(" ");
