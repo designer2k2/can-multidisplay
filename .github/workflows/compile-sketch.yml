@@ -18,7 +18,7 @@ jobs:
           platforms: |
             - name: "teensy:avr"
               source-url: https://www.pjrc.com/teensy/td_156/package_teensy_index.json
-              version: "1.57.0"
+              version: "1.57.2"
           sketch-paths: |
             - ./
           fqbn: "teensy:avr:teensy40"

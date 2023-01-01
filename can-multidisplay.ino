@@ -39,7 +39,7 @@
 // There is a "SYNCH" Bit, that should show if the Speed is ok
 
 // Onboard LED:
-#define ONBOARD_LED  33
+#define ONBOARD_LED 33
 
 // Image test:
 #include "res/Dlogominiature.c"
@@ -195,7 +195,7 @@ void setup() {
   // LED on PCB:
   pinMode(ONBOARD_LED, OUTPUT);
   //Led toggle: 33 = FlexPWM2.0 (Pin 4 and 33) for
-  analogWriteFrequency(ONBOARD_LED, 515625); //515625 for 396mhz 8 bit: https://www.pjrc.com/teensy/td_pulse.html
+  analogWriteFrequency(ONBOARD_LED, 515625);  //515625 for 396mhz 8 bit: https://www.pjrc.com/teensy/td_pulse.html
   analogWrite(ONBOARD_LED, 255);
 
   Wire.begin();
