@@ -62,11 +62,11 @@ CAN_message_t canMsg1;  //Message to be send
 // Display:
 #include <Adafruit_GFX.h>
 #include <ILI9341_t3n.h>
-#include <ili9341_t3n_font_Arial.h>  // from ILI9341_t3n
+#include <font_Arial.h>  // from mjs513/ILI9341_t3n
 #include <XPT2046_Touchscreen.h>
 #include <SPI.h>
 
-#include "res/font_AwesomeF000.c"  // from ILI9341_fonts (modified for ILI9341_t3n)
+#include <font_AwesomeF000.h>  // from mjs513/ILI9341_fonts
 
 //Font test:
 #include "res/7segment20pt7b.h"
