@@ -3,15 +3,15 @@
 
 // BIN print: https://stackoverflow.com/questions/111928/is-there-a-printf-converter-to-print-in-binary-format
 #define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
-#define BYTE_TO_BINARY(byte)  \
+#define BYTE_TO_BINARY(byte) \
   (byte & 0x80 ? '1' : '0'), \
-  (byte & 0x40 ? '1' : '0'), \
-  (byte & 0x20 ? '1' : '0'), \
-  (byte & 0x10 ? '1' : '0'), \
-  (byte & 0x08 ? '1' : '0'), \
-  (byte & 0x04 ? '1' : '0'), \
-  (byte & 0x02 ? '1' : '0'), \
-  (byte & 0x01 ? '1' : '0')
+    (byte & 0x40 ? '1' : '0'), \
+    (byte & 0x20 ? '1' : '0'), \
+    (byte & 0x10 ? '1' : '0'), \
+    (byte & 0x08 ? '1' : '0'), \
+    (byte & 0x04 ? '1' : '0'), \
+    (byte & 0x02 ? '1' : '0'), \
+    (byte & 0x01 ? '1' : '0')
 
 
 void screen4press(int X, int Y, int Z) {
@@ -90,24 +90,26 @@ void screen4run() {
     //CAN Error gets true on any warning / error from the CAN controller
     //The can_error_data contains detailed information.
     tft.println("CAN Error!");
-    tft.print("FlexCAN State: "); tft.print((char*)emucan.can_error_data.state);
-    if ( emucan.can_error_data.BIT1_ERR ) tft.print(", BIT1_ERR");
-    if ( emucan.can_error_data.BIT0_ERR ) tft.print(", BIT0_ERR");
-    if ( emucan.can_error_data.ACK_ERR ) tft.print(", ACK_ERR");
-    if ( emucan.can_error_data.CRC_ERR ) tft.print(", CRC_ERR");
-    if ( emucan.can_error_data.FRM_ERR ) tft.print(", FRM_ERR");
-    if ( emucan.can_error_data.STF_ERR ) tft.print(", STF_ERR");
-    if ( emucan.can_error_data.RX_WRN ) tft.printf(", RX_WRN: %d", emucan.can_error_data.RX_ERR_COUNTER);
-    if ( emucan.can_error_data.TX_WRN ) tft.printf(", TX_WRN: %d", emucan.can_error_data.TX_ERR_COUNTER);
+    tft.print("FlexCAN State: ");
+    tft.print((char*)emucan.can_error_data.state);
+    if (emucan.can_error_data.BIT1_ERR) tft.print(", BIT1_ERR");
+    if (emucan.can_error_data.BIT0_ERR) tft.print(", BIT0_ERR");
+    if (emucan.can_error_data.ACK_ERR) tft.print(", ACK_ERR");
+    if (emucan.can_error_data.CRC_ERR) tft.print(", CRC_ERR");
+    if (emucan.can_error_data.FRM_ERR) tft.print(", FRM_ERR");
+    if (emucan.can_error_data.STF_ERR) tft.print(", STF_ERR");
+    if (emucan.can_error_data.RX_WRN) tft.printf(", RX_WRN: %d", emucan.can_error_data.RX_ERR_COUNTER);
+    if (emucan.can_error_data.TX_WRN) tft.printf(", TX_WRN: %d", emucan.can_error_data.TX_ERR_COUNTER);
     tft.printf(", FLT_CONF: %s\n", (char*)emucan.can_error_data.FLT_CONF);
   } else {
     tft.println("No Can Error");
-    tft.print("FlexCAN State: "); tft.print((char*)emucan.can_error_data.state);
+    tft.print("FlexCAN State: ");
+    tft.print((char*)emucan.can_error_data.state);
   }
 
 
   if (emucan.over_run) {
-    tft.println("Overrun on CAN Bus! Loosing Data!");
+    tft.println("Overrun on CAN Bus! Losing Data!");
     tft.drawRect(0, 0, 320, 240, ILI9341_BLUE);
   }
 

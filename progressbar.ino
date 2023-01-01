@@ -2,7 +2,7 @@
 // https://www.designer2k2.at
 
 
-void pbar(int va, int x, int y, int w, int h , boolean hor, uint16_t bcolor, uint16_t fcolor) {
+void pbar(int va, int x, int y, int w, int h, boolean hor, uint16_t bcolor, uint16_t fcolor) {
   // X/Y = origin
   // W/H = size
   // va = Value (0-100)
@@ -11,7 +11,7 @@ void pbar(int va, int x, int y, int w, int h , boolean hor, uint16_t bcolor, uin
   // fcolor = Color of the bar
 
   // Outline Box:
-  tft.drawRect(x, y,  w, h, bcolor);
+  tft.drawRect(x, y, w, h, bcolor);
 
   if (hor) {
     // Calc:
@@ -22,7 +22,6 @@ void pbar(int va, int x, int y, int w, int h , boolean hor, uint16_t bcolor, uin
     // Calc:
     int filler = map(va, 100, 0, 0, h - 2);
     // Fill:
-    tft.fillRect(x + 1, y + filler, w - 2, h - filler-1, fcolor);
+    tft.fillRect(x + 1, y + filler, w - 2, h - filler - 1, fcolor);
   }
-
 }

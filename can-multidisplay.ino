@@ -25,7 +25,7 @@
 // 9 Screenshot transfer & recovery, 450kb transmit, compressed to 65kb
 // 9 Send CAN Switch Status (8 of them)
 // 7 Send GPS Speed over CAN
-// 2 Bord computer -> finally as standalone lib
+// 2 Board (Trip) computer -> finally as standalone lib
 
 
 // Implement more: Lambda Target (multiply by 128), RPM Limit (in steps of 50), Fuel consumed (16 bit), VE ( 16 bit)
@@ -42,7 +42,7 @@
 #define ONBOARD_LED  33
 
 // Image test:
-#include "Dlogominiature.c"
+#include "res/Dlogominiature.c"
 
 // Threading:
 #include <Arduino.h>
@@ -57,29 +57,29 @@ ThreadWrap(Serial, SerialX);
 // CAN Bus:
 #include <EMUcanT4.h>
 EMUcan emucan;
-CAN_message_t canMsg1;    //Message to be send
+CAN_message_t canMsg1;  //Message to be send
 
 // Display:
 #include <Adafruit_GFX.h>
 #include <ILI9341_t3n.h>
-#include <ili9341_t3n_font_Arial.h> // from ILI9341_t3n
+#include <ili9341_t3n_font_Arial.h>  // from ILI9341_t3n
 #include <XPT2046_Touchscreen.h>
 #include <SPI.h>
 
-#include "font_AwesomeF000.h" // from ILI9341_fonts (modified for ILI9341_t3n)
+#include "res/font_AwesomeF000.c"  // from ILI9341_fonts (modified for ILI9341_t3n)
 
 //Font test:
-#include "7segment20pt7b.h"
+#include "res/7segment20pt7b.h"
 
 
-DMAMEM uint16_t fb1[320 * 240]; //Framebuffer
-#define TFT_DC  9
+DMAMEM uint16_t fb1[320 * 240];  //Framebuffer
+#define TFT_DC 9
 #define TFT_CS 10
 ILI9341_t3n tft = ILI9341_t3n(TFT_CS, TFT_DC);
 
 // Touchscreen:
-#define CS_PIN  8
-#define TIRQ_PIN  2
+#define CS_PIN 8
+#define TIRQ_PIN 2
 XPT2046_Touchscreen ts(CS_PIN, TIRQ_PIN);  // Param 2 - Touch IRQ Pin - interrupt enabled polling
 
 // EEPROM:
@@ -104,14 +104,14 @@ ADS1115 ADS(0x48);
 // SD Card:
 #include <SD.h>
 const int chipSelect = BUILTIN_SDCARD;
-bool datalogactive = false;    //This flag show the datalog is working ok
+bool datalogactive = false;  //This flag show the datalog is working ok
 
 // WS2812 LED
 #include <WS2812Serial.h>
 const int numled = 4;
 const int pin = 20;
-byte drawingMemory[numled * 3];       //  3 bytes per LED
-DMAMEM byte displayMemory[numled * 12]; // 12 bytes per LED
+byte drawingMemory[numled * 3];          //  3 bytes per LED
+DMAMEM byte displayMemory[numled * 12];  // 12 bytes per LED
 WS2812Serial leds(numled, displayMemory, drawingMemory, pin, WS2812_GRB);
 unsigned int rgb_status = 0;
 
@@ -122,9 +122,9 @@ TinyGPSPlus gps;
 int gps_loop_count = 0;
 
 // Variables for the loop:
-unsigned long previousMillisS = 0;    // Last Time the Screen was shown
-unsigned long previousMillisL = 0;    // Last Time the Log was written
-unsigned long intervals = 50;         // Screen Update Interval
+unsigned long previousMillisS = 0;  // Last Time the Screen was shown
+unsigned long previousMillisL = 0;  // Last Time the Log was written
+unsigned long intervals = 50;       // Screen Update Interval
 boolean ledshine = true;
 int emptycycles = 0;
 
@@ -236,15 +236,20 @@ void setup() {
 
   // read diagnostics (optional but can help debug problems)
   uint8_t x = tft.readcommand8(ILI9341_RDMODE);
-  Serial.print("Display Power Mode: 0x"); Serial.println(x, HEX);
+  Serial.print("Display Power Mode: 0x");
+  Serial.println(x, HEX);
   x = tft.readcommand8(ILI9341_RDMADCTL);
-  Serial.print("MADCTL Mode: 0x"); Serial.println(x, HEX);
+  Serial.print("MADCTL Mode: 0x");
+  Serial.println(x, HEX);
   x = tft.readcommand8(ILI9341_RDPIXFMT);
-  Serial.print("Pixel Format: 0x"); Serial.println(x, HEX);
+  Serial.print("Pixel Format: 0x");
+  Serial.println(x, HEX);
   x = tft.readcommand8(ILI9341_RDIMGFMT);
-  Serial.print("Image Format: 0x"); Serial.println(x, HEX);
+  Serial.print("Image Format: 0x");
+  Serial.println(x, HEX);
   x = tft.readcommand8(ILI9341_RDSELFDIAG);
-  Serial.print("Self Diagnostic: 0x"); Serial.println(x, HEX);
+  Serial.print("Self Diagnostic: 0x");
+  Serial.println(x, HEX);
 
   // Initial Text on Display:
   tft.setCursor(1, 10);
@@ -280,13 +285,14 @@ void setup() {
   Serial.print(F("MPU6050 status: "));
   Serial.println(statusmpu);
   Serial.println(F("will now wait for MPU6050"));
-  while (statusmpu != 0) { } // stop everything if could not connect to MPU6050
+  while (statusmpu != 0) {}  // stop everything if could not connect to MPU6050
   Serial.println(F("Calculating offsets, do not move MPU6050"));
   delay(1000);
-  mpu.calcOffsets(true, false); // gyro and accelero
-  mpu.setAccOffsets(0, -1.0, 0); //Static offset for upright mounting
+  mpu.calcOffsets(true, false);   // gyro and accelero
+  mpu.setAccOffsets(0, -1.0, 0);  //Static offset for upright mounting
   Serial.println("Done!\n");
-  Serial.print(F("MPU TEMPERATURE: ")); Serial.println(mpu.getTemp());
+  Serial.print(F("MPU TEMPERATURE: "));
+  Serial.println(mpu.getTemp());
 
   // ADS1015 Setup:
   Serial.print("ADS1X15_LIB_VERSION: ");
@@ -295,7 +301,10 @@ void setup() {
   ADS.setGain(0);
   int16_t val_0 = ADS.readADC(0);
   float f = ADS.toVoltage(1);  // voltage factor
-  Serial.print("\tAnalog0: "); Serial.print(val_0); Serial.print('\t'); Serial.println(val_0 * f, 3);
+  Serial.print("\tAnalog0: ");
+  Serial.print(val_0);
+  Serial.print('\t');
+  Serial.println(val_0 * f, 3);
 
   //CAN Bus:
   Serial.print("EMUCANT4_LIB_VERSION: ");
@@ -351,11 +360,11 @@ void setup() {
   Serial.println(volume.fatType(), DEC);
   Serial.println();
 
-  volumesize = volume.blocksPerCluster();    // clusters are collections of blocks
-  volumesize *= volume.clusterCount();       // we'll have a lot of clusters
+  volumesize = volume.blocksPerCluster();  // clusters are collections of blocks
+  volumesize *= volume.clusterCount();     // we'll have a lot of clusters
   if (volumesize < 8388608ul) {
     Serial.print("Volume size (bytes): ");
-    Serial.println(volumesize * 512);        // SD card blocks are always 512 bytes
+    Serial.println(volumesize * 512);  // SD card blocks are always 512 bytes
   }
   Serial.print("Volume size (Kbytes): ");
   volumesize /= 2;
@@ -398,7 +407,7 @@ void setup() {
   //Turn of: GPGSA GPGSV GPGSV GPGSV GPGSV GPGLL GPTXT GPVTG
   //Switch to Standby (approx 1mA, any other send = wakeup:
   //gpsPort.print(F("$PMTK161,0*28\r\n"));
-  //L80-R Backup Battery: https://www.quectel.com/UploadImage/Downlad/Quectel_L80-R_Hardware_Design_V1.2.pdf
+  //L80-R Backup Battery: https://www.quectel.com/wp-content/uploads/2021/03/Quectel_L80-R_Hardware_Design_V1.3-1.pdf
 
   //Switch to GN-801 GPS Module:
   //https://content.arduino.cc/assets/Arduino-MKR-GPS-Shield_u-blox8-M8_ReceiverDescrProtSpec_UBX-13003221_Public.pdf
@@ -424,10 +433,11 @@ void setup() {
 
 
   //Switch to BN-280 GPS Module:
-  Serial.print("Using TinyGPS library v. "); Serial.println(TinyGPSPlus::libraryVersion());
+  Serial.print("Using TinyGPS library v. ");
+  Serial.println(TinyGPSPlus::libraryVersion());
   //gpsPort.print(F("$PUBX,41,1,0003,0003,115200,0*1C\r\n"));  //Specific for Ublox M8, only NMEA+UBX
   // use u-center to setup the GPS module (with serial pass through mode)
-  gpsPort.begin(230400); //from now on we use 230400
+  gpsPort.begin(230400);  //from now on we use 230400
 
 
   //Restore Settings:
@@ -447,7 +457,6 @@ void setup() {
 
   Serial.print("EMUCANT4_LIB_VERSION: ");
   Serial.println(EMUCANT4_LIB_VERSION);
-
 }
 
 // Loop: ------------------------------------------------------------------------------------------------
@@ -565,11 +574,15 @@ void loop() {
     if ((millis() > CAN_Switch_turnoff) && (CAN_Switch_2 == true)) {
       CAN_Switch_2 = false;
       Send_CAN_Switch_States();
-      Serial.print("Switch 2: "); Serial.println(CAN_Switch_2);
+      Serial.print("Switch 2: ");
+      Serial.println(CAN_Switch_2);
     }
 
     if (DebugPrint) {
-      Serial.print("Empty cycles: "); Serial.print(emptycycles); Serial.print(" freeram = "); Serial.println(freeram());
+      Serial.print("Empty cycles: ");
+      Serial.print(emptycycles);
+      Serial.print(" freeram = ");
+      Serial.println(freeram());
     }
     emptycycles = 0;
 
@@ -582,7 +595,6 @@ void loop() {
       datalogtask();
     }
   }
-
 }
 
 // ------------------------------------------------------------------------------------------------

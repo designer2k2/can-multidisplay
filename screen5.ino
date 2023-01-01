@@ -1,4 +1,4 @@
-// Bord Computer
+// (Trip) Board Computer
 // Follow ~ the VAG style with a Single journey memory, and a Total journey memory: http://www.audihelp.com/auda-11-on_board_computer.html
 
 // Consumption:  Below 5kmh  = L/H,  else L/100km
@@ -39,7 +39,7 @@ void screen5run() {
 
   // Logo and Time:
   tft.fillScreen(ILI9341_BLACK);
-  tft.writeRect(280, 200, 40, 39, (uint16_t*)Dlogominiature);
+  tft.writeRect(280, 200, 40, 39, (uint16_t *)Dlogominiature);
   //Date and Time from RTC:
   tft.setTextColor(ILI9341_WHITE);
   tft.setFont(Arial_8);
@@ -97,7 +97,7 @@ void screen5run() {
     if (emucan.emu_data.cel & emucan.ERR_WBO) tft.print("WBO ");
     if (emucan.emu_data.cel & emucan.ERR_EGT1) tft.print("EGT1 ");
     if (emucan.emu_data.cel & emucan.ERR_EGT2) tft.print("EGT2 ");
-    if (emucan.emu_data.cel & emucan.EGT_ALARM ) tft.print("KNOCK");
+    if (emucan.emu_data.cel & emucan.EGT_ALARM) tft.print("KNOCK");
   }
 
 
@@ -105,8 +105,7 @@ void screen5run() {
 }
 
 // t is time in seconds = millis()/1000;
-char * TimeToString(unsigned long t)
-{
+char *TimeToString(unsigned long t) {
   static char str[12];
   long h = t / 3600;
   t = t % 3600;
@@ -140,7 +139,7 @@ void board_computer_autosave(struct trip_data *tripdata, int storage_slot) {
       if (emucan.emu_data.vssSpeed < 2) {
         if (trip_runtime1.aboveVSS) {
           trip_runtime1.aboveVSS = false;
-          //Below treshhold and hysteresis ok:
+          //Below threshold and hysteresis ok:
           board_computer_save(tripdata, storage_slot);
           trip_runtime1.trip_save_time = millis();
         }
@@ -153,10 +152,9 @@ void board_computer_autosave(struct trip_data *tripdata, int storage_slot) {
     trip_runtime1.trip_save_time = millis();
     board_computer_save(tripdata, storage_slot);
   }
-
 }
 
-// Run this at a static intervall:
+// Run this at a static interval:
 void board_computer_calc(struct trip_data *tripdata) {
   //Timestamp:
   unsigned long this_time = millis();
@@ -169,11 +167,12 @@ void board_computer_calc(struct trip_data *tripdata) {
 
   //Distance with speed:
   float dist;
-  dist = ((time_diff * this_speed) / 3600.0) / 1000.0; //Meter since last update
+  dist = ((time_diff * this_speed) / 3600.0) / 1000.0;  //Meter since last update
   tripdata->trip_distance += dist;
 
   //Handle fuel used reset:
-  tripdata->trip_fuel_used =  tripdata->fuel_offset + emucan.emu_data.fuel_used - trip_runtime1.trip_save_fuel;
+  tripdata->trip_fuel_used = tripdata->fuel_offset + emucan.emu_data.fuel_used - trip_runtime1.trip_save_fuel;
+
 
   //Trip time:
   tripdata->trip_time = tripdata->trip_time_offset + this_time - trip_runtime1.trip_save_time;
@@ -187,7 +186,7 @@ void board_computer_calc(struct trip_data *tripdata) {
       tripdata->trip_fuel_now = 0;
     }
     tripdata->trip_fuel_stationary = false;
-    tripdata->trip_fuel_now = tripdata->trip_fuel_now * 0.9 + (100.0 / this_speed  * fuel_usage) * 0.1;
+    tripdata->trip_fuel_now = tripdata->trip_fuel_now * 0.9 + (100.0 / this_speed * fuel_usage) * 0.1;
   } else {
     if (tripdata->trip_fuel_stationary == false) {
       tripdata->trip_fuel_now = 0;
@@ -195,7 +194,6 @@ void board_computer_calc(struct trip_data *tripdata) {
     tripdata->trip_fuel_stationary = true;
     tripdata->trip_fuel_now = tripdata->trip_fuel_now * 0.9 + fuel_usage * 0.1;
   }
-
 }
 
 // Call this to reset a trip:
@@ -229,7 +227,7 @@ void board_computer_save(struct trip_data *tripdata, int storage_slot) {
 
   //Starting with position 100 (keep the lower ones for other things
   unsigned int eeAddress = 100 + 50 * (storage_slot - 1);
-  EEPROM.put( eeAddress, *tripdata);
+  EEPROM.put(eeAddress, *tripdata);
   Serial.print("Trip stored, Size of Tripdata:");
   Serial.println(sizeof(*tripdata));
   Serial.print("Time:");
@@ -241,7 +239,7 @@ void board_computer_save(struct trip_data *tripdata, int storage_slot) {
 void board_computer_restore(struct trip_data *tripdata, int storage_slot) {
   // Read it:
   unsigned int eeAddress = 100 + 50 * (storage_slot - 1);
-  EEPROM.get( eeAddress, *tripdata );
+  EEPROM.get(eeAddress, *tripdata);
   //Restore the distance from the offset:
   tripdata->trip_distance = tripdata->distance_offset;
   Serial.print("Trip restored:");

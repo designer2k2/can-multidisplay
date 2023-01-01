@@ -6,11 +6,11 @@
 */
 
 
-#include <CircularBuffer.h>     //https://github.com/rlogiacco/CircularBuffer/
+#include <CircularBuffer.h>  //https://github.com/rlogiacco/CircularBuffer/
 
-CircularBuffer<byte, 320> buffer;  //Framebuffer1 for the Scope Data
-CircularBuffer<byte, 320> buffer2; //Framebuffer2 for the Scope Data
-CircularBuffer<byte, 320> buffer3; //Framebuffer3 for the Scope Data
+CircularBuffer<byte, 320> buffer;   //Framebuffer1 for the Scope Data
+CircularBuffer<byte, 320> buffer2;  //Framebuffer2 for the Scope Data
+CircularBuffer<byte, 320> buffer3;  //Framebuffer3 for the Scope Data
 int sincount = 0;
 
 boolean scoperun = true;
@@ -120,11 +120,11 @@ void screen3run() {
   if (scoperun) {
     tft.setTextColor(ILI9341_GREEN);
     tft.print(char(75));  // 75 = play, 76 = pause https://hackaday.io/project/7330/gallery#db8ed33fc293ae63248b1d5737a3f128
-    intervals = 50;  // Update every 50ms
+    intervals = 50;       // Update every 50ms
   } else {
     tft.setTextColor(ILI9341_YELLOW);
     tft.print(char(76));  // 75 = play, 76 = pause https://hackaday.io/project/7330/gallery#db8ed33fc293ae63248b1d5737a3f128
-    intervals = 500;  // Update every 500ms
+    intervals = 500;      // Update every 500ms
   }
 
   //Update the screen:
