@@ -1,7 +1,7 @@
 // Can Display
 // https://www.designer2k2.at
 // Target: Teensy 4.0 with Cut VUSB trace
-// Arduino 1.8.13 with Teensyduino 1.53, Teensy 4.0 with 396MHZ seems enough (and runs cooler)
+// Arduino 1.8.19 with Teensyduino 1.56, Teensy 4.0 with 396MHZ seems enough (and runs cooler)
 
 // ToDo: (* = open,  1-9 completeness where 9 = testet)
 // 9 Teensy Test with USB Power (TPS2113A selector)
@@ -38,6 +38,9 @@
 // Teensy 4: https://www.pjrc.com/teensy/IMXRT1060RM_rev2.pdf
 // There is a "SYNCH" Bit, that should show if the Speed is ok
 
+// Onboard LED:
+#define ONBOARD_LED 33
+
 // Image test:
 #include "res/Dlogominiature.c"
 
@@ -59,11 +62,11 @@ CAN_message_t canMsg1;  //Message to be send
 // Display:
 #include <Adafruit_GFX.h>
 #include <ILI9341_t3n.h>
-#include <ili9341_t3n_font_Arial.h>  // from ILI9341_t3n
+#include <font_Arial.h>  // from mjs513/ILI9341_t3n
 #include <XPT2046_Touchscreen.h>
 #include <SPI.h>
 
-#include "res/font_AwesomeF000.c"  // from ILI9341_fonts (modified for ILI9341_t3n)
+#include <font_AwesomeF000.h>  // from mjs513/ILI9341_fonts
 
 //Font test:
 #include "res/7segment20pt7b.h"
@@ -132,6 +135,7 @@ int screenactive = 1;
 // Global Debug Flag:
 bool DebugPrint = false;
 bool SerialBridge = false;
+bool CanDebugPrint = false;
 
 // CAN Switch States:
 bool CAN_Switch_1 = false;
@@ -140,7 +144,6 @@ unsigned long CAN_Switch_turnoff = 0;
 
 // Extra CAN Infos:
 unsigned int rev_limiter = 6500;  //Pre load with 6500
-float fuel_used = 0;
 float fuel_usage = 0;
 
 // Board computer things:
@@ -190,20 +193,20 @@ void setup() {
   Serial.begin(115200);
 
   // LED on PCB:
-  pinMode(33, OUTPUT);
+  pinMode(ONBOARD_LED, OUTPUT);
   //Led toggle: 33 = FlexPWM2.0 (Pin 4 and 33) for
-  analogWriteFrequency(33, 515625);  //515625 for 396mhz 8 bit: https://www.pjrc.com/teensy/td_pulse.html
-  analogWrite(33, 255);
+  analogWriteFrequency(ONBOARD_LED, 515625);  //515625 for 396mhz 8 bit: https://www.pjrc.com/teensy/td_pulse.html
+  analogWrite(ONBOARD_LED, 255);
 
   Wire.begin();
   //Wire.setClock(400000);
 
-  analogWrite(33, 0);
+  analogWrite(ONBOARD_LED, 0);
 
   // set the Time library to use Teensy 4.0's RTC to keep time
   setSyncProvider(getTeensy3Time);
 
-  analogWrite(33, 255);
+  analogWrite(ONBOARD_LED, 255);
 
   // Wait for Arduino Serial Monitor to open
   //while (!Serial);
@@ -214,7 +217,7 @@ void setup() {
   Serial.print("F_CPU_ACTUAL=");
   Serial.println(F_CPU_ACTUAL);
 
-  analogWrite(33, 0);
+  analogWrite(ONBOARD_LED, 0);
 
   //I2C Scanner:
   i2cscanner();

@@ -399,7 +399,7 @@ void screen2run() {
   tft.setCursor(175, 107);
   tft.print("S: ");
   tft.setTextColor(ILI9341_WHITE);
-  tft.print(emucan.emu_data.IgnAngle, 0);
+  tft.print(emucan.emu_data.IgnAngle, 1);
   tft.setCursor(250, 107);
   tft.setTextColor(ILI9341_BLUE);
   tft.print("F: ");

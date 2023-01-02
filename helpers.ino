@@ -144,9 +144,9 @@ void debugLEDtoggle() {
   //Led toggle: 33 = FlexPWM2.0 (Pin 4 and 33) for
   ledshine = !ledshine;
   if (ledshine) {
-    analogWrite(33, 10);  //5 is enough, very bright led...
+    analogWrite(ONBOARD_LED, 10);  //5 is enough, very bright led...
   } else {
-    analogWrite(33, 0);
+    analogWrite(ONBOARD_LED, 0);
   }
 }
 
@@ -166,6 +166,7 @@ void CommandHandler(String commandtext) {
     Serial.println("c:d:i for a I2C Scann Result");
     Serial.println("c:d:d toggle Debug Infos");
     Serial.println("c:d:s Serial bridge to the GPS Module");
+    Serial.println("c:d:c Serial print all CAN messages");
     Serial.println("c:d:w:1000  Wait with Delay 1000");
     Serial.println("c:d:h:200 converts heading to Text (200=NW)");
     Serial.println("c:d:r:123023 send pixel color from 123 023");
@@ -174,7 +175,7 @@ void CommandHandler(String commandtext) {
   } else if (commandtext.substring(0, 3) == "c:s") {
     SendFile(commandtext.substring(4));
   } else if (commandtext.substring(0, 3) == "c:v") {
-    Serial.println("Version: 1.0");
+    Serial.println("Version: 1.01");
   } else if (commandtext.substring(0, 3) == "c:l") {
     ListFile();
   } else if (commandtext.substring(0, 5) == "c:d:i") {
@@ -185,6 +186,9 @@ void CommandHandler(String commandtext) {
   } else if (commandtext.substring(0, 5) == "c:d:s") {
     //Serial Bridge to GPS
     SerialBridge = !SerialBridge;
+  } else if (commandtext.substring(0, 5) == "c:d:c") {
+    //Debug print CAN to Serial
+    CanDebugPrint = !CanDebugPrint;
   } else if (commandtext.substring(0, 5) == "c:d:w") {
     //Delay with given time (c:d:w:1000 = 1Sec)
     String rt = commandtext.substring(6);
@@ -390,7 +394,7 @@ void specialframefunction(const CAN_message_t *frame) {
 
   if (frame->id == 0x520) {
     //Byte 0 = Lambda Target * 128
-    emucan.emu_data.lambdaTarget = frame->buf[0] / 128.0;
+    //emucan.emu_data.lambdaTarget = frame->buf[0] / 128.0;
   }
 
   if (frame->id == 0x521) {
@@ -398,8 +402,23 @@ void specialframefunction(const CAN_message_t *frame) {
     //Byte 1/2 = Fuel used * 100
     //Byte 3/4 = Fuel usage * 100
     //rev_limiter = frame->buf[0] * 50; that's only 0/1 not the actual value
-    fuel_used = ((frame->buf[2] << 8) + frame->buf[1]) / 100.0;   // Send 16bit unsigned little endian
-    fuel_usage = ((frame->buf[4] << 8) + frame->buf[3]) / 100.0;  // Send 16bit unsigned little endian
+    //fuel_used = ((frame->buf[2] << 8) + frame->buf[1]) / 100.0;  // Send 16bit unsigned little endian
+    fuel_usage = ((frame->buf[4] << 8) + frame->buf[3]) * 0.01;  // Send 16bit unsigned little endian
+  }
+
+  // if can debug is chosen print every frame to the serial port:
+  if (CanDebugPrint) {
+    Serial.print(frame->id, HEX);  // print ID
+    Serial.print(" ");
+    Serial.print(frame->len, HEX);  // print DLC
+    Serial.print(" ");
+
+    for (int i = 0; i < frame->len; i++) {  // print the data
+      Serial.print(frame->buf[i], HEX);
+      Serial.print(" ");
+    }
+
+    Serial.println();
   }
 }
 

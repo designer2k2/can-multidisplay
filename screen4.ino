@@ -46,7 +46,7 @@ void screen4run() {
   tft.setTextSize(1);
 
   digitalClockDisplay();
-  tft.println("");
+  tft.print("");
 
   if (emucan.EMUcan_Status == EMUcan_RECEIVED_WITHIN_LAST_SECOND) {
     tft.setTextColor(ILI9341_GREEN);
@@ -79,7 +79,9 @@ void screen4run() {
   sprintf(sz, "E Flag: " BYTE_TO_BINARY_PATTERN " Flags1 " BYTE_TO_BINARY_PATTERN "",
           BYTE_TO_BINARY(emucan.emu_data.cel), BYTE_TO_BINARY(emucan.emu_data.flags1));
   tft.println(sz);
-
+  sprintf(sz, "WBO Tar %.1f FuelC %.1f",
+          emucan.emu_data.lambdaTarget, emucan.emu_data.fuel_used);
+  tft.println(sz);
   if (emucan.emu_data.flags1 & emucan.F_IDLE) {
     tft.println("Engine Idle active");
   }

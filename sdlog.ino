@@ -91,9 +91,9 @@ void datalogtask2() {
   dataString += ",";
   dataString += String(emucan.emu_data.Baro);
   dataString += ",";
-  dataString += String(emucan.emu_data.IgnAngle, 0);
+  dataString += String(emucan.emu_data.IgnAngle, 1);
   dataString += ",";
-  dataString += String(emucan.emu_data.LambdaCorrection, 0);
+  dataString += String(emucan.emu_data.LambdaCorrection, 1);
   dataString += ",";
   dataString += String(emucan.emu_data.gear);
   dataString += ",";
@@ -113,7 +113,7 @@ void datalogtask2() {
   dataString += ",";
   dataString += String(emucan.emu_data.oilPressure);
   dataString += ",";
-  dataString += String(fuel_used);
+  dataString += String(emucan.emu_data.fuel_used);
   dataString += ",";
   dataString += String(emucan.can_error_data.state[1]);  //Only first character
 
