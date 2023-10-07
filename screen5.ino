@@ -12,7 +12,7 @@ void screen5press(int X, int Y, int Z) {
         //switch screens  lower right
         ScreenSwitch();
       } else {
-        // Uper right:
+        // Upper right:
         board_computer_reset(&trip1);
       }
     } else {
@@ -20,7 +20,7 @@ void screen5press(int X, int Y, int Z) {
         //lower left:
         board_computer_restore(&trip1, 1);
       } else {
-        // Uper left:
+        // Upper left:
         board_computer_save(&trip1, 1);
       }
     }
