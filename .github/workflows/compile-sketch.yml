@@ -29,7 +29,7 @@ jobs:
             - name: "ILI9341_t3n"
             - name: "I2C Temperature Sensors derived from the LM75"
             - name: "TinyGPSPlus"
-            - name: "EMUcanT4"
+            - source-url: https://github.com/designer2k2/EMUcanT4/archive/refs/tags/v1.1.0.zip
             - name: "MPU6050_light"
             - name: "ADS1X15"
             - name: "Adafruit GFX Library"
